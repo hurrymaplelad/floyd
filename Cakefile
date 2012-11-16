@@ -1,6 +1,6 @@
 _ = require 'underscore'
 {Rdio} = require 'rdio-node'
-Dbox = require 'dbox'
+DropBox = require './dropbox'
 settings = require './settings'
 
 VARIOUS_ARTISTS_KEY = 'rl62|2333316'
@@ -33,7 +33,10 @@ getUserKey = remember (cb) ->
     failOnError (result) ->
       cb result.key 
 
-task 'listAlbums', 'list all albums in Rdio collection', ->
+task 'dbox:access', 'get a Drop Box access token', ->
+  DropBox.launchAccessTokenWizard()
+
+task 'albums', 'list all albums in Rdio collection', ->
   console.log "listing all albums in #{settings.RDIO_USERNAME}'s Rdio collection" 
   getUserKey (key) ->
     rdio.makeRequest 'getAlbumsInCollection',
