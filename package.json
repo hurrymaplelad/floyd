@@ -1,0 +1,13 @@
+{
+  "name": "chores",
+  "version": "0.0.1",
+  "main": "./lib/index.js",
+  "dependencies": {
+    "underscore": "*",
+    "coffee-script" : "1.4.x",
+    "rdio-node": "git://github.com/monsur/rdio-node.git"
+  },
+  "engine": {
+    "node": ">=0.8"
+  }
+}
