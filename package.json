@@ -7,7 +7,14 @@
     "rdio-node": "git://github.com/monsur/rdio-node.git",
     "dbox": "0.5.x"
   },
+  "devDependencies": {
+    "mocha": "*",
+    "expect.js": "*"
+  },
   "engine": {
     "node": ">=0.8"
+  },
+  "scripts" : {
+    "test" : "mocha --compilers coffee:coffee-script spec"
   }
 }

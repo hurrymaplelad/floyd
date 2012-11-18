@@ -48,7 +48,6 @@ class Rdio
           )
 
   tracksByVariousArtists: (cb) ->
-    
 
 
   # tracks by various artists
