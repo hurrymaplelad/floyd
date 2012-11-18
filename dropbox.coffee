@@ -12,32 +12,33 @@ failOnError = (cb) ->
       throw err
     cb response
 
-app = ->
-  Dbox.app
-    app_key: settings.DBOX_APP_KEY
-    app_secret: settings.DBOX_APP_SECRET
 
-client = ->
-  app().client
-    oauth_token: settings.DBOX_ACCESS_TOKEN
+class Dropbox
+  constructor: ->
+    @app = Dbox.app
+      app_key: settings.DBOX_APP_KEY
+      app_secret: settings.DBOX_APP_SECRET
 
-DropBox = ->
-  _.extend client(), {}
+    @client =
+      @app.client
+        oauth_token: settings.DBOX_ACCESS_TOKEN
+        oauth_token_secret: settings.DBOX_ACCESS_SECRET
 
-DropBox.launchAccessTokenWizard = ->
-  app = app()
-  exec = require('child_process').exec
-  rl = require('readline').createInterface
-    input: process.stdin
-    output: process.stdout
+  launchAccessTokenWizard: ->
+    exec = require('child_process').exec
+    rl = require('readline').createInterface
+      input: process.stdin
+      output: process.stdout
 
-  app.requesttoken failOnError (response) ->
-    console.log "please visit #{response.authorize_url}"
-    exec "open #{response.authorize_url}"
-    rl.question "have you authorized the app? ", ->
-      rl.close()
-      app.accesstoken response, failOnError (accessToken) ->
-        console.log "generated access token: #{accessToken.oauth_token}"
-        console.log "good till revoked"
+    @app.requesttoken failOnError (response) =>
+      console.log "please visit #{response.authorize_url}"
+      exec "open #{response.authorize_url}"
+      rl.question "press enter after you authorize the app in a browser: ", =>
+        rl.close()
+        @app.accesstoken response, failOnError (accessToken) =>
+          console.log "granted access:"
+          console.log "  DBOX_ACCESS_TOKEN: #{accessToken.oauth_token}"
+          console.log "  DBOX_ACCESS_SECRET: #{accessToken.oauth_token_secret}"
+          console.log "good till revoked or regenerated"
 
-module.exports = DropBox
+module.exports = Dropbox
