@@ -5,7 +5,7 @@ nconf.env()
 try
   nconf.defaults(require './local.settings')
 catch error
-  throw error unless error.code is 'MODULE_NOT_FOUND'
+  # ignore
 
 # Extract settings to flat object for pretty access
 settings = {}
