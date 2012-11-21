@@ -22,5 +22,13 @@ task 'rdio:collection', 'write Rdio albums and one-off tracks to dropbox', ->
         box.dump 'rdio/albums.json', albumsByArtist
         box.dump 'rdio/oneOffTracks.json', oneOffTracks
 
+task 'rdio:playlists', 'write Rdio playlists to dropbox', ->
+  new Rdio().init (rdio) ->
+    console.log "listing #{rdio.user.username}'s Rdio playlists" 
+    rdio.playlists (playlists) ->
+      console.log "found #{playlists.length} playlists"
+      box = new Dropbox().client
+      box.dump 'rdio/playlists.json', playlists
+
 task 'throw', 'where does the error go?', ->
   throw new Error 'on purpose'

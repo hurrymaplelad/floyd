@@ -34,34 +34,55 @@ class Rdio
         @user = result
         cb @user
 
+  cleanAlbum: (album) ->
+    _(album).pick(
+      'releaseDate'
+      'name'
+      'artist'
+      'artistKey'
+      'albumKey'
+      'length'
+    )        
+
   albums: (cb) ->
     @driver.makeRequest 'getAlbumsInCollection',
       user: @user.key
-      failOnError (albums) ->
-        cb albums.map (album) -> 
-          _(album).pick(
-            'releaseDate'
-            'name'
-            'artist'
-            'artistKey'
-            'albumKey'
-            'length'
-          )
+      failOnError (albums) =>
+        cb albums.map @cleanAlbum
+
+  cleanPlaylist: (playlist) =>
+    playlist.tracks = playlist.tracks.map @cleanTrack
+    _(playlist).pick(
+      'name'
+      'key'
+      'lastUpdated'
+      'tracks'
+    )
+
+  playlists: (cb) ->
+    @driver.makeRequest 'getUserPlaylists', 
+      user: @user.key
+      kind: 'owned'
+      extras: ['tracks']
+      failOnError (playlists) =>
+        cb playlists.map @cleanPlaylist
+
+  cleanTrack: (track) ->
+    _(track).pick(
+      'name'
+      'trackNum'
+      'artist'
+      'artistKey'
+      'album'
+      'albumKey'
+    )
 
   tracksByVariousArtists: (cb) ->
     @driver.makeRequest 'getTracksForArtistInCollection',
       user: @user.key
       artist: VARIOUS_ARTISTS_KEY
-      failOnError (tracks) ->
-        cb tracks.map (track) ->
-          _(track).pick(
-            'name'
-            'trackNum'
-            'artist'
-            'artistKey'
-            'album'
-            'albumKey'
-          )
+      failOnError (tracks) =>
+        cb tracks.map @cleanTrack
 
   # modifies the argument map, 
   # returns the filtered out tracks
