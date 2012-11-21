@@ -1,5 +1,3 @@
-# Floyd
-
 ![from Jet Force Gemini](http://hurrymaplelad.com/images/floyd.jpg)
 
 Floyd is a collection of tasks run periodically to backup and check the 
