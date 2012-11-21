@@ -15,3 +15,6 @@ task 'rdio:albums', 'write Rdio albums and one-off tracks to dropbox', ->
       box = new Dropbox().client
       box.put 'rdio/albums.json', JSON.stringify(byArtist, null, '  '), (status, meta) ->
         console.log "#{status} writing #{meta.bytes} bytes to 'albums.json'"
+
+task 'throw', 'where does the error go?', ->
+  throw new Error 'on purpose'
