@@ -20,9 +20,13 @@ class Dropbox
       app_secret: settings.DBOX_APP_SECRET
 
     @client =
-      @app.client
+      _(@app.client
         oauth_token: settings.DBOX_ACCESS_TOKEN
         oauth_token_secret: settings.DBOX_ACCESS_SECRET
+      ).extend
+        dump: (path, data) ->
+          @.put path, JSON.stringify(data, null, '  '), failOnError (meta) ->
+            console.log "wrote #{meta?.bytes} bytes to #{path}"
 
   launchAccessTokenWizard: ->
     exec = require('child_process').exec

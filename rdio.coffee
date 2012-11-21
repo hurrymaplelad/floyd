@@ -6,6 +6,7 @@ _ = require 'underscore'
 Driver = require('rdio-node').Rdio
 settings = require './settings'
 
+# Rdio's artist key for albums by Various Artists
 VARIOUS_ARTISTS_KEY = 'rl62|2333316'
 
 failOnError = (cb) ->
@@ -48,17 +49,44 @@ class Rdio
           )
 
   tracksByVariousArtists: (cb) ->
+    @driver.makeRequest 'getTracksForArtistInCollection',
+      user: @user.key
+      artist: VARIOUS_ARTISTS_KEY
+      failOnError (tracks) ->
+        cb tracks.map (track) ->
+          _(track).pick(
+            'name'
+            'trackNum'
+            'artist'
+            'artistKey'
+            'album'
+            'albumKey'
+          )
 
+  # modifies the argument map, 
+  # returns the filtered out tracks
+  filterOneOffs: (albumsByArtist, cb) ->
+    questionableAlbums = albumsByArtist['Various Artists']
+    console.log "listing track details for #{questionableAlbums.length} potential one-offs"
+    @tracksByVariousArtists (tracks) =>
+      {wholeAlbums, oneOffTracks} = @collectOneOffs tracks
+      albumsByArtist['Various Artists'] = questionableAlbums.filter (album) -> 
+        album.albumKey in wholeAlbums
+      cb oneOffTracks
 
-  # tracks by various artists
-  # rdio.makeRequest 'getTracksForArtistInCollection',
-  #   user: key
-  #   artist: VARIOUS_ARTISTS_KEY
-  #   failOnError (tracks) ->
-  #     console.log tracks
+  collectOneOffs: (tracks) ->
+    wholeAlbums = []
+    oneOffTracks = []
+    for key, albumTracks of _(tracks).groupBy('albumKey') 
+      if albumTracks.length > 2
+        wholeAlbums.push key
+      else 
+        oneOffTracks.push albumTracks
 
-  # TODO: group collections with more than 3 tracks back
-  #       into albums
+    return {
+      wholeAlbums
+      oneOffTracks: _(oneOffTracks).flatten()
+    }
 
 module.exports = Rdio
 

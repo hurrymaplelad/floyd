@@ -5,16 +5,22 @@ Dropbox = require './dropbox'
 task 'dbox:access', 'get a Drop Box access token', ->
   new Dropbox().launchAccessTokenWizard()
 
-task 'rdio:albums', 'write Rdio albums and one-off tracks to dropbox', ->
+task 'rdio:collection', 'write Rdio albums and one-off tracks to dropbox', ->
   new Rdio().init (rdio) ->
     console.log "listing all albums in #{rdio.user.username}'s Rdio collection" 
     rdio.albums (albums) ->
-      byArtist = _(albums).groupBy 'artist'
+     
+      albumsByArtist = _(albums).groupBy 'artist'
+      console.log "found #{albums.length} albums by #{_(albumsByArtist).keys().length} artists"
+     
+      # Get track-level details for albums that likely only have one track in my collection
+      rdio.filterOneOffs albumsByArtist, (oneOffTracks) ->
+        console.log "#{oneOffTracks.length} tracks deemed one-offs"
 
-      console.log "found #{albums.length} albums by #{_(byArtist).keys().length} artists"
-      box = new Dropbox().client
-      box.put 'rdio/albums.json', JSON.stringify(byArtist, null, '  '), (status, meta) ->
-        console.log "#{status} writing #{meta.bytes} bytes to 'albums.json'"
+        # write tracks and albums to dropbox
+        box = new Dropbox().client
+        box.dump 'rdio/albums.json', albumsByArtist
+        box.dump 'rdio/oneOffTracks.json', oneOffTracks
 
 task 'throw', 'where does the error go?', ->
   throw new Error 'on purpose'
