@@ -5,6 +5,7 @@
     "underscore": "*",
     "coffee-script": "1.4.x",
     "nconf": "*",
+    "plist": "*",
     "rdio-node": "git://github.com/monsur/rdio-node.git",
     "dbox": "0.5.x"
   },
