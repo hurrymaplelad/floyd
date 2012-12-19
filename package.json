@@ -17,6 +17,6 @@
     "npm": "1.1.x"
   },
   "scripts" : {
-    "test" : "mocha --compilers coffee:coffee-script spec"
+    "test" : "mocha"
   }
 }
