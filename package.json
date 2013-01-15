@@ -2,6 +2,7 @@
   "name": "chores",
   "version": "0.0.1",
   "dependencies": {
+    "async": "*",
     "underscore": "*",
     "coffee-script": "1.4.x",
     "nconf": "*",

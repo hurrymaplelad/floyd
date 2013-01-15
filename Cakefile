@@ -1,9 +1,16 @@
 _ = require 'underscore'
 Rdio = require './rdio'
 Dropbox = require './dropbox'
+ITunes = require './itunes'
+ITunesToRdioMigrator = require './itunes_to_rdio_migrator'
+async = require 'async'
 
 task 'dbox:access', 'get a Drop Box access token', ->
   new Dropbox().launchAccessTokenWizard()
+
+task 'rdio:access', 'get an Rdio access token', ->
+  new Rdio().init (rdio) ->
+    rdio.launchAccessTokenWizard()
 
 task 'rdio:collection', 'write Rdio albums and one-off tracks to dropbox', ->
   new Rdio().init (rdio) ->
@@ -30,5 +37,71 @@ task 'rdio:playlists', 'write Rdio playlists to dropbox', ->
       box = new Dropbox().client
       box.dump 'rdio/playlists.json', playlists
 
-task 'throw', 'where does the error go?', ->
-  throw new Error 'on purpose'
+option '-q', '--query [SEARCH]', 'search for this'
+
+task 'rdio:search', '', ({query}) ->
+  new Rdio().init (rdio) ->
+    rdio.searchAlbums {query, count: 1}, (albums) ->
+      console.log albums
+
+task 'itunes:missing', 'find iTunes albums missing from Rdio collection', ->
+  iTunes = new ITunes().loadLibrary '/Volumes/Archive/audio/itunes/iTunes Library.xml'
+  iTunesAlbumsByArtist = iTunes.albumsByArtist()
+  box = new Dropbox().client
+  box.parse 'rdio/albums.json', (rdioAlbumsByArtist) ->
+    migrator = new ITunesToRdioMigrator {rdioAlbumsByArtist, iTunesAlbumsByArtist}
+    incompleteArtists = _(migrator.listIncompleteArtists())
+      .filter ({missingTrackCount}) -> 
+        missingTrackCount > 1
+
+    console.log incompleteArtists.length, 'incomplete artists'
+    for {name, rdio, iTunes, missing, missingTrackCount} in incompleteArtists
+      console.log name
+      console.log '--------------'
+      console.log "Rdio", _(rdio).map (a) -> a.name
+      console.log "iTunes", _(iTunes).map (a) -> a.name
+      console.log "Missing", _(missing).map (a) -> a.name
+      console.log "#{missingTrackCount} missing tracks"
+      console.log ''
+
+task 'itunes:match', 'add Rdio albums matching missing iTunes albums', ->
+  iTunes = new ITunes().loadLibrary '/Volumes/Archive/audio/itunes/iTunes Library.xml'
+  iTunesAlbumsByArtist = iTunes.albumsByArtist()
+  box = new Dropbox().client
+  box.parse 'rdio/albums.json', (rdioAlbumsByArtist) ->
+    migrator = new ITunesToRdioMigrator {rdioAlbumsByArtist, iTunesAlbumsByArtist}
+    incompleteArtists = _(migrator.listIncompleteArtists())
+      .filter ({missingTrackCount}) -> 
+        missingTrackCount > 1
+  
+    console.log incompleteArtists.length, 'artists to match'
+    new Rdio().init (rdio) ->
+      async.series _(incompleteArtists)
+        .chain()
+        .map(({missing}) -> missing)
+        .flatten()
+        .map((album) ->
+          (done) ->
+            rdio.searchAlbums( 
+              query: [album.name, album.artist].join ' '
+              count: 1
+            , (albums) ->
+              rdioAlbum = albums[0]
+              unless rdioAlbum?
+                console.log "No match for #{album.name} by #{album.artist}"
+                setTimeout done, 300
+              else unless migrator.match {iTunesAlbum: album, rdioAlbum: rdioAlbum}
+                console.log "Mismatch for #{album.name} by #{album.artist} (found #{rdioAlbum.name} by #{rdioAlbum.artist})"
+                setTimeout done, 300
+              else
+                console.log "Adding #{rdioAlbum.trackKeys.length} tracks..." 
+                rdio.add rdioAlbum.trackKeys.join(','), ->
+                  console.log "Success! Added #{rdioAlbum.name} by #{rdioAlbum.artist}" 
+                  setTimeout done, 400
+            )
+          )
+        .value()
+      , ->
+ 
+  
+

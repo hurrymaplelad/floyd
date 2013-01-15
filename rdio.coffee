@@ -12,10 +12,10 @@ VARIOUS_ARTISTS_KEY = 'rl62|2333316'
 failOnError = (cb) ->
   (err, response) ->
     if err?
-      throw err
-    if response.status isnt 'ok'
+      throw new Error(JSON.stringify(err))
+    if response?.status? and response.status isnt 'ok'
       throw new Error(JSON.stringify response)
-    cb response.result
+    cb response?.result ? response
 
 class Rdio
 
@@ -23,6 +23,12 @@ class Rdio
     @driver = new Driver 
       consumerKey: settings.RDIO_KEY
       consumerSecret: settings.RDIO_SECRET
+
+    if settings.RDIO_ACCESS_TOKEN? and settings.RDIO_ACCESS_SECRET?
+      @driver.dataStore_.set 'accessToken'
+        oauthAccessToken: settings.RDIO_ACCESS_TOKEN
+        oauthAccessTokenSecret: settings.RDIO_ACCESS_SECRET
+
     @_findUser =>
       cb @
 
@@ -109,7 +115,34 @@ class Rdio
       oneOffTracks: _(oneOffTracks).flatten()
     }
 
-module.exports = Rdio
+  searchAlbums: (options, cb) ->
+    options.types = 'Album'
+    options.count ?= 3
+    @driver.makeRequest 'search', options, failOnError (response) =>
+      cb response.results
 
+  add: (trackKeys, cb) ->
+    @driver.makeRequest 'addToCollection', {keys: trackKeys}, failOnError (response) =>
+      cb response
+
+  launchAccessTokenWizard: (cb) ->
+    exec = require('child_process').exec
+    rl = require('readline').createInterface
+      input: process.stdin
+      output: process.stdout
+    @driver.beginAuthentication failOnError (loginUrl) =>
+      console.log "please visit #{loginUrl}"
+      exec "open #{loginUrl}"
+      rl.question "enter PIN from browser: ", (pin) =>
+        rl.close()
+        pin = pin.trim()
+        @driver.completeAuthentication pin, failOnError =>
+          accessToken = @driver.dataStore_.get('accessToken')
+          console.log 'authentication successful:'
+          console.log "  RDIO_ACCESS_TOKEN: #{accessToken.oauthAccessToken}"
+          console.log "  RDIO_ACCESS_SECRET: #{accessToken.oauthAccessTokenSecret}"
+          console.log "good till revoked or regenerated"
+
+module.exports = Rdio
 
 
