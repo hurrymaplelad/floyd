@@ -1,4 +1,4 @@
-![Jet Force Gemini](https://raw.github.com/hurrymaplelad/floyd/master/docs/floyd.jpg)
+![Jet Force Gemini](docs/floyd.jpg)
 
 Floyd is a collection of tasks run periodically to backup and check the 
 status of my favorite services.
