@@ -20,12 +20,12 @@ failOnError = (cb) ->
 class Rdio
 
   init: (cb) ->
-    @driver = new Driver 
+    @driver = new Driver
       consumerKey: settings.RDIO_KEY
       consumerSecret: settings.RDIO_SECRET
 
     if settings.RDIO_ACCESS_TOKEN? and settings.RDIO_ACCESS_SECRET?
-      @driver.dataStore_.set 'accessToken'
+      @driver.dataStore_.set 'accessToken',
         oauthAccessToken: settings.RDIO_ACCESS_TOKEN
         oauthAccessTokenSecret: settings.RDIO_ACCESS_SECRET
 
@@ -48,7 +48,7 @@ class Rdio
       'artistKey'
       'albumKey'
       'length'
-    )        
+    )
 
   albums: (cb) ->
     @driver.makeRequest 'getAlbumsInCollection',
@@ -66,7 +66,7 @@ class Rdio
     )
 
   playlists: (cb) ->
-    @driver.makeRequest 'getUserPlaylists', 
+    @driver.makeRequest 'getUserPlaylists',
       user: @user.key
       kind: 'owned'
       extras: ['tracks']
@@ -90,24 +90,24 @@ class Rdio
       failOnError (tracks) =>
         cb tracks.map @cleanTrack
 
-  # modifies the argument map, 
+  # modifies the argument map,
   # returns the filtered out tracks
   filterOneOffs: (albumsByArtist, cb) ->
     questionableAlbums = albumsByArtist['Various Artists']
     console.log "listing track details for #{questionableAlbums.length} potential one-offs"
     @tracksByVariousArtists (tracks) =>
       {wholeAlbums, oneOffTracks} = @collectOneOffs tracks
-      albumsByArtist['Various Artists'] = questionableAlbums.filter (album) -> 
+      albumsByArtist['Various Artists'] = questionableAlbums.filter (album) ->
         album.albumKey in wholeAlbums
       cb oneOffTracks
 
   collectOneOffs: (tracks) ->
     wholeAlbums = []
     oneOffTracks = []
-    for key, albumTracks of _(tracks).groupBy('albumKey') 
+    for key, albumTracks of _(tracks).groupBy('albumKey')
       if albumTracks.length > 2
         wholeAlbums.push key
-      else 
+      else
         oneOffTracks.push albumTracks
 
     return {

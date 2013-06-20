@@ -2,23 +2,24 @@
   "name": "chores",
   "version": "0.0.1",
   "dependencies": {
-    "async": "*",
-    "underscore": "*",
-    "coffee-script": "1.4.x",
-    "nconf": "*",
-    "plist": "*",
+    "async": "~0.2.9",
+    "underscore": "~1.4.4",
+    "coffee-script": "~1.6.3",
+    "nconf": "~0.6.7",
+    "plist": "~0.4.3",
     "rdio-node": "git://github.com/monsur/rdio-node.git",
-    "dbox": "0.5.x"
+    "dbox": "~0.5.7",
+    "github": "~0.1.10"
   },
   "devDependencies": {
-    "mocha": "*",
-    "expect.js": "*"
+    "mocha": "~1.11.0",
+    "expect.js": "~0.2.0"
   },
   "engines": {
     "node": "0.8.x",
     "npm": "1.1.x"
   },
-  "scripts" : {
-    "test" : "mocha specs --compilers coffee:coffee-script --recursive"
+  "scripts": {
+    "test": "mocha specs --compilers coffee:coffee-script --recursive"
   }
 }
