@@ -14,12 +14,12 @@ task 'rdio:access', 'get an Rdio access token', ->
 
 task 'rdio:collection', 'write Rdio albums and one-off tracks to dropbox', ->
   new Rdio().init (rdio) ->
-    console.log "listing all albums in #{rdio.user.username}'s Rdio collection" 
+    console.log "listing all albums in #{rdio.user.username}'s Rdio collection"
     rdio.albums (albums) ->
-     
+
       albumsByArtist = _(albums).groupBy 'artist'
       console.log "found #{albums.length} albums by #{_(albumsByArtist).keys().length} artists"
-     
+
       # Get track-level details for albums that likely only have one track in my collection
       rdio.filterOneOffs albumsByArtist, (oneOffTracks) ->
         console.log "#{oneOffTracks.length} tracks deemed one-offs"
@@ -31,7 +31,7 @@ task 'rdio:collection', 'write Rdio albums and one-off tracks to dropbox', ->
 
 task 'rdio:playlists', 'write Rdio playlists to dropbox', ->
   new Rdio().init (rdio) ->
-    console.log "listing #{rdio.user.username}'s Rdio playlists" 
+    console.log "listing #{rdio.user.username}'s Rdio playlists"
     rdio.playlists (playlists) ->
       console.log "found #{playlists.length} playlists"
       box = new Dropbox().client
@@ -51,7 +51,7 @@ task 'itunes:missing', 'find iTunes albums missing from Rdio collection', ->
   box.parse 'rdio/albums.json', (rdioAlbumsByArtist) ->
     migrator = new ITunesToRdioMigrator {rdioAlbumsByArtist, iTunesAlbumsByArtist}
     incompleteArtists = _(migrator.listIncompleteArtists())
-      .filter ({missingTrackCount}) -> 
+      .filter ({missingTrackCount}) ->
         missingTrackCount > 1
 
     console.log incompleteArtists.length, 'incomplete artists'
@@ -71,9 +71,9 @@ task 'itunes:match', 'add Rdio albums matching missing iTunes albums', ->
   box.parse 'rdio/albums.json', (rdioAlbumsByArtist) ->
     migrator = new ITunesToRdioMigrator {rdioAlbumsByArtist, iTunesAlbumsByArtist}
     incompleteArtists = _(migrator.listIncompleteArtists())
-      .filter ({missingTrackCount}) -> 
+      .filter ({missingTrackCount}) ->
         missingTrackCount > 1
-  
+
     console.log incompleteArtists.length, 'artists to match'
     new Rdio().init (rdio) ->
       async.series _(incompleteArtists)
@@ -82,7 +82,7 @@ task 'itunes:match', 'add Rdio albums matching missing iTunes albums', ->
         .flatten()
         .map((album) ->
           (done) ->
-            rdio.searchAlbums( 
+            rdio.searchAlbums(
               query: [album.name, album.artist].join ' '
               count: 1
             , (albums) ->
@@ -94,14 +94,14 @@ task 'itunes:match', 'add Rdio albums matching missing iTunes albums', ->
                 console.log "Mismatch for #{album.name} by #{album.artist} (found #{rdioAlbum.name} by #{rdioAlbum.artist})"
                 setTimeout done, 300
               else
-                console.log "Adding #{rdioAlbum.trackKeys.length} tracks..." 
+                console.log "Adding #{rdioAlbum.trackKeys.length} tracks..."
                 rdio.add rdioAlbum.trackKeys.join(','), ->
-                  console.log "Success! Added #{rdioAlbum.name} by #{rdioAlbum.artist}" 
+                  console.log "Success! Added #{rdioAlbum.name} by #{rdioAlbum.artist}"
                   setTimeout done, 400
             )
           )
         .value()
       , ->
- 
-  
+
+
 

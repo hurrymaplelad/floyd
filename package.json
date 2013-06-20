@@ -19,6 +19,6 @@
     "npm": "1.1.x"
   },
   "scripts" : {
-    "test" : "mocha"
+    "test" : "mocha specs --compilers coffee:coffee-script --recursive"
   }
 }
