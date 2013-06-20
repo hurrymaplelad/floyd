@@ -1,7 +1,7 @@
 expect = require 'expect.js'
-Dropbox = require '../dropbox'
+Dropbox = require '../../dropbox'
 
-describe 'Dropbox', ->
+describe 'Dropbox integration', ->
 
   it 'can write', (done) ->
     box = new Dropbox().client
@@ -12,7 +12,6 @@ describe 'Dropbox', ->
 
 after (done) ->
   this.timeout 5000
-  box = new Dropbox().client
-  box.rm 'tmp', -> done()
+  new Dropbox().client.rm 'tmp', -> done()
 
 

@@ -4,9 +4,12 @@ Dropbox = require './dropbox'
 ITunes = require './itunes'
 ITunesToRdioMigrator = require './itunes_to_rdio_migrator'
 async = require 'async'
+github = require './tasks/github'
 
 task 'dbox:access', 'get a Drop Box access token', ->
   new Dropbox().launchAccessTokenWizard()
+
+task 'github:repos', 'archive github repos to dropbox', github.repos
 
 task 'rdio:access', 'get an Rdio access token', ->
   new Rdio().init (rdio) ->

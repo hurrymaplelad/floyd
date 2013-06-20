@@ -1,4 +1,4 @@
-# 
+#
 # Chore friendly wrapper around the Dbox library
 #
 
@@ -11,7 +11,6 @@ failOnError = (cb) ->
     if err? and err isnt 200
       throw err
     cb response
-
 
 class Dropbox
   constructor: ->
