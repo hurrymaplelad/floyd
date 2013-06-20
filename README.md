@@ -1,8 +1,5 @@
 ![Jet Force Gemini](docs/floyd.jpg)
 
-Floyd is a collection of tasks run periodically to backup and check the 
-status of my favorite services.
-
 ## Getting Started
 
 Tasks are defined in the `Cakefile`.  Try listing them with
