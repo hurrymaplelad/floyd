@@ -48,7 +48,7 @@ task 'mp:ticks', 'write Mountain Project route ticks to dropbox', ->
     [tickCount] = ticks.match(/\d+ Ticks for [\w ]+\n/gi) ? []
     console.log "found #{tickCount}"
     box = new Dropbox().client
-    box.dump 'mountain-project/ticks.json', ticks
+    box.write 'mountain-project/ticks.html', ticks
 
 option '-q', '--query [SEARCH]', 'search for this'
 
