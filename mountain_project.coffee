@@ -18,6 +18,7 @@ class MountainProject
 
   constructor: ->
     @id = settings.MOUNTAIN_PROJECT_ID
+    throw new Error("mountian project id required") unless @id
 
   ticks: (done) ->
     request "http://www.mountainproject.com/u/#{@id}?action=ticks&export=1", failOnError (res, body) ->
