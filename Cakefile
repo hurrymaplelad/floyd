@@ -2,6 +2,7 @@ _ = require 'underscore'
 Rdio = require './rdio'
 Dropbox = require './dropbox'
 ITunes = require './itunes'
+MountainProject = require './mountain_project'
 ITunesToRdioMigrator = require './itunes_to_rdio_migrator'
 async = require 'async'
 github = require './tasks/github'
@@ -39,6 +40,15 @@ task 'rdio:playlists', 'write Rdio playlists to dropbox', ->
       console.log "found #{playlists.length} playlists"
       box = new Dropbox().client
       box.dump 'rdio/playlists.json', playlists
+
+task 'mp:ticks', 'write Mountain Project route ticks to dropbox', ->
+  mp = new MountainProject()
+  console.log "listing Mountain Project user #{mp.id} ticks"
+  mp.ticks (ticks) ->
+    [tickCount] = ticks.match(/\d+ Ticks for [\w ]+\n/gi) ? []
+    console.log "found #{tickCount}"
+    box = new Dropbox().client
+    box.dump 'mountain-project/ticks.json', ticks
 
 option '-q', '--query [SEARCH]', 'search for this'
 

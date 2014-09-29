@@ -23,9 +23,11 @@ class Dropbox
         oauth_token: settings.DBOX_ACCESS_TOKEN
         oauth_token_secret: settings.DBOX_ACCESS_SECRET
       ).extend
-        dump: (path, data) ->
-          @put path, JSON.stringify(data, null, '  '), failOnError (meta) ->
+        write: (path, data) ->
+          @put path, data, failOnError (meta) ->
             console.log "wrote #{meta?.bytes} bytes to #{path}"
+        dump: (path, data) ->
+          @write path, JSON.stringify(data, null, '  ')
         parse: (path, cb) ->
           @get path, failOnError (reply) ->
             cb JSON.parse(reply)

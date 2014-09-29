@@ -2,7 +2,7 @@ expect = require 'expect.js'
 Github = require 'github'
 settings = require '../../settings'
 
-describe.only 'Github integration', ->
+describe 'Github integration', ->
   github = null
   username = settings.GITHUB_USERNAME
 
