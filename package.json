@@ -3,22 +3,21 @@
   "version": "0.0.1",
   "dependencies": {
     "async": "~0.2.9",
-    "underscore": "~1.4.4",
     "coffee-script": "~1.6.3",
-    "nconf": "~0.6.7",
-    "plist": "~0.4.3",
-    "rdio-node": "git://github.com/monsur/rdio-node.git",
     "dbox": "~0.5.7",
     "github": "~0.1.10",
-    "request": "~2.44.0"
+    "nconf": "~0.6.7",
+    "plist": "~0.4.3",
+    "rdio": ">=3.1.0",
+    "request": "~2.44.0",
+    "underscore": "~1.4.4"
   },
   "devDependencies": {
     "mocha": "~1.11.0",
     "expect.js": "~0.2.0"
   },
   "engines": {
-    "node": "0.8.x",
-    "npm": "1.1.x"
+    "node": "0.10.x"
   },
   "scripts": {
     "test": "mocha specs --compilers coffee:coffee-script --recursive"

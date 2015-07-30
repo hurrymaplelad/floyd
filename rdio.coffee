@@ -3,8 +3,11 @@
 #
 
 _ = require 'underscore'
-Driver = require('rdio-node').Rdio
 settings = require './settings'
+
+# this URL is registered with our rdio app,
+# even though we done't host anything there.
+REDIRECT_URI = 'http://localhost:8000/'
 
 # Rdio's artist key for albums by Various Artists
 VARIOUS_ARTISTS_KEY = 'rl62|2333316'
@@ -20,23 +23,32 @@ failOnError = (cb) ->
 class Rdio
 
   init: (cb) ->
-    @driver = new Driver
-      consumerKey: settings.RDIO_KEY
-      consumerSecret: settings.RDIO_SECRET
+    @driver = new (require('rdio') {
+      rdio:
+        clientId: settings.RDIO_ID
+        clientSecret: settings.RDIO_SECRET
+    })({
+      refreshToken: settings.RDIO_REFRESH_TOKEN
+    })
 
-    if settings.RDIO_ACCESS_TOKEN? and settings.RDIO_ACCESS_SECRET?
-      @driver.dataStore_.set 'accessToken',
-        oauthAccessToken: settings.RDIO_ACCESS_TOKEN
-        oauthAccessTokenSecret: settings.RDIO_ACCESS_SECRET
+    # Short circuit if we need to manually
+    # auth the app for a refresh token (see cake rdio:access)
+    unless settings.RDIO_REFRESH_TOKEN?
+      return cb @
 
-    @_findUser =>
-      cb @
+    # flash our long-lived refresh token to get a 12 hour access token.
+    # See http://www.rdio.com/developers/docs/web-service/oauth2/quick-ref/ref-token-and-code-expiration
+    @driver.getAccessToken {redirect: REDIRECT_URI}, failOnError =>
+      # Pre-fetch the user, we need it to do anything interesting
+      # and we fail fast if username is misconfigured.
+      @_findUser =>
+        cb @
 
   _findUser: (cb) ->
-    @driver.makeRequest 'findUser',
-      vanityName: settings.RDIO_USERNAME
+    @driver.request {
+      method: 'currentUser'
       extras: ['username']
-      failOnError (result) =>
+    }, failOnError (result) =>
         @user = result
         cb @user
 
@@ -50,11 +62,22 @@ class Rdio
       'length'
     )
 
+  PAGE_SIZE: 200
   albums: (cb) ->
-    @driver.makeRequest 'getAlbumsInCollection',
-      user: @user.key
-      failOnError (albums) =>
-        cb albums.map @cleanAlbum
+    pages = []
+    _fetchPageOfAlbums = (pageNum) =>
+      @driver.request
+        method: 'getAlbumsInCollection'
+        user: @user.key
+        count: @PAGE_SIZE
+        start: pageNum * @PAGE_SIZE
+        failOnError (page) =>
+          pages.push page
+          if page.length >= @PAGE_SIZE
+            _fetchPageOfAlbums(pageNum+1)
+          else
+            cb [].concat(pages...).map @cleanAlbum
+    _fetchPageOfAlbums(0)
 
   cleanPlaylist: (playlist) =>
     playlist.tracks = playlist.tracks.map @cleanTrack
@@ -66,7 +89,8 @@ class Rdio
     )
 
   playlists: (cb) ->
-    @driver.makeRequest 'getUserPlaylists',
+    @driver.request
+      method: 'getUserPlaylists'
       user: @user.key
       kind: 'owned'
       extras: ['tracks']
@@ -84,7 +108,8 @@ class Rdio
     )
 
   tracksByVariousArtists: (cb) ->
-    @driver.makeRequest 'getTracksForArtistInCollection',
+    @driver.request
+      method: 'getTracksForArtistInCollection'
       user: @user.key
       artist: VARIOUS_ARTISTS_KEY
       failOnError (tracks) =>
@@ -118,30 +143,36 @@ class Rdio
   searchAlbums: (options, cb) ->
     options.types = 'Album'
     options.count ?= 3
-    @driver.makeRequest 'search', options, failOnError (response) =>
+    options.method = 'search'
+    @driver.request options, failOnError (response) =>
       cb response.results
 
   add: (trackKeys, cb) ->
-    @driver.makeRequest 'addToCollection', {keys: trackKeys}, failOnError (response) =>
-      cb response
+    @driver.request
+      method: 'addToCollection'
+      keys: trackKeys
+      failOnError (response) =>
+        cb response
 
-  launchAccessTokenWizard: (cb) ->
+  launchAccessTokenWizard: ->
     exec = require('child_process').exec
     rl = require('readline').createInterface
       input: process.stdin
       output: process.stdout
-    @driver.beginAuthentication failOnError (loginUrl) =>
-      console.log "please visit #{loginUrl}"
-      exec "open #{loginUrl}"
-      rl.question "enter PIN from browser: ", (pin) =>
-        rl.close()
-        pin = pin.trim()
-        @driver.completeAuthentication pin, failOnError =>
-          accessToken = @driver.dataStore_.get('accessToken')
-          console.log 'authentication successful:'
-          console.log "  RDIO_ACCESS_TOKEN: #{accessToken.oauthAccessToken}"
-          console.log "  RDIO_ACCESS_SECRET: #{accessToken.oauthAccessTokenSecret}"
-          console.log "good till revoked or regenerated"
+    authUrl = @driver.oauth.getAuthorizeUrl
+      redirect_uri: REDIRECT_URI
+      response_type: 'code'
+
+    console.log "please visit #{authUrl} and copy the code the redirected url querystring"
+    exec "open '#{authUrl}'"
+    rl.question "enter code from browser querystring: ", (code) =>
+      rl.close()
+      code = code.trim()
+      @driver.getAccessToken {code, redirect: REDIRECT_URI}, failOnError =>
+        {refreshToken} = @driver.tokens
+        console.log 'authentication successful:'
+        console.log "  RDIO_REFRESH_TOKEN: #{refreshToken}"
+        console.log "good till revoked or regenerated"
 
 module.exports = Rdio
 
