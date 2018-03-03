@@ -3,50 +3,39 @@
 #
 
 _ = require 'underscore'
-Dbox = require 'dbox'
+dropboxV2Api = require 'dropbox-v2-api'
 settings = require './settings'
+{Readable} = require 'stream'
+{promisify} = require 'util'
 
-failOnError = (cb) ->
-  (err, response) ->
-    if err? and err isnt 200
-      throw err
-    cb response
-
+# See docs:
+# - https://github.com/adasq/dropbox-v2-api/blob/master/EXAMPLES.md
+# - http://dropbox.github.io/dropbox-sdk-js/Dropbox.html
 class Dropbox
   constructor: ->
-    @app = Dbox.app
-      app_key: settings.DBOX_APP_KEY
-      app_secret: settings.DBOX_APP_SECRET
+    @dropbox = dropboxV2Api.authenticate token: settings.DBOX_ACCESS_TOKEN
+    @dropbox = promisify @dropbox
 
-    @client =
-      _(@app.client
-        oauth_token: settings.DBOX_ACCESS_TOKEN
-        oauth_token_secret: settings.DBOX_ACCESS_SECRET
-      ).extend
-        write: (path, data) ->
-          @put path, data, failOnError (meta) ->
-            console.log "wrote #{meta?.bytes} bytes to #{path}"
-        dump: (path, data) ->
-          @write path, JSON.stringify(data, null, '  ')
-        parse: (path, cb) ->
-          @get path, failOnError (reply) ->
-            cb JSON.parse(reply)
+  uploadStream: (path, dataStream) ->
+    meta = await @dropbox
+      resource: 'files/upload',
+      parameters:
+          path: path
+      readStream: dataStream
+    console.log "wrote #{meta?.size} bytes to #{path}"
+    return meta
 
-  launchAccessTokenWizard: ->
-    exec = require('child_process').exec
-    rl = require('readline').createInterface
-      input: process.stdin
-      output: process.stdout
+  uploadString: (path, data) ->
+    dataStream = new Readable()
+    dataStream.push data
+    dataStream.push null
+    await @uploadStream path, dataStream
 
-    @app.requesttoken failOnError (response) =>
-      console.log "please visit #{response.authorize_url}"
-      exec "open #{response.authorize_url}"
-      rl.question "press enter after you authorize the app in a browser: ", =>
-        rl.close()
-        @app.accesstoken response, failOnError (accessToken) =>
-          console.log "granted access:"
-          console.log "  DBOX_ACCESS_TOKEN: #{accessToken.oauth_token}"
-          console.log "  DBOX_ACCESS_SECRET: #{accessToken.oauth_token_secret}"
-          console.log "good till revoked or regenerated"
+  delete: (path) ->
+    await @dropbox
+      resource: 'files/delete_v2'
+      parameters:
+          path: path
+    console.log "deleted #{path}"
 
 module.exports = Dropbox

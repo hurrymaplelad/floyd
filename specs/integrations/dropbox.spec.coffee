@@ -3,15 +3,12 @@ Dropbox = require '../../dropbox'
 
 describe 'Dropbox integration', ->
 
-  it 'can write', (done) ->
-    box = new Dropbox().client
-    box.put 'tmp/test/write', 'success', (status, meta) ->
-      expect(status).to.be 200
-      expect(meta.bytes).to.be 7
-      done()
+  it 'can write', ->
+    dropbox = new Dropbox()
+    meta = await dropbox.uploadString '/tmp/test/write', 'success'
+    expect(meta.size).to.be 7
 
-after (done) ->
-  this.timeout 5000
-  new Dropbox().client.rm 'tmp', -> done()
-
-
+after ->
+  @timeout 5000
+  dropbox = new Dropbox()
+  await dropbox.delete '/tmp'

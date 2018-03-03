@@ -4,7 +4,7 @@
   "dependencies": {
     "async": "~2.6.0",
     "coffeescript": "^2.2.2",
-    "dropbox": "^3.0.5",
+    "dropbox-v2-api": "^2.1.13",
     "github": "~13.1.0",
     "nconf": "~0.10.0",
     "plist": "~2.1.0",

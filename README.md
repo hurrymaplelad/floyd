@@ -10,4 +10,4 @@ Tasks are defined in the `Cakefile`.  Try listing them with
 
 Check `reference.settings.coffee` for all API keys configurable as environment variables or in `local.settings.coffee`.
 
-The Dropbox Access Token is a bit tedious to get.  `cake dbox:access` will generate one after you've configured an App Key and App Secret pair.
+Grab a personal Dropbox keypair: https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/
