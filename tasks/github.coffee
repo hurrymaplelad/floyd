@@ -8,14 +8,36 @@ asyncjs = require 'async'
 
 eachLimit = promisify asyncjs.eachLimit
 exec = promisify childProcess.exec
+dropbox = new Dropbox()
 
-concatPageData = (method) ->
+concatPageData = (method, mapFn = (x) -> x) ->
   response = await method
-  data = response.data
+  data = response.data.map(mapFn)
   while octokit.hasNextPage response
     response = await octokit.getNextPage response
-    data = data.concat response.data
+    data = data.concat response.data.map(mapFn)
   return data
+
+stars = ->
+  console.log "[github] Listing #{GITHUB_USERNAME}'s starred repos"
+  starredRepos = await concatPageData(
+    octokit.activity.getStarredRepos
+      page: 0
+      per_page: 75 # bump up the default to consume less of our quota
+    (response) ->
+      # the first page has starred_at, the rest don't >:(
+      repo = response.repo ? response
+      return
+        full_name: repo.full_name
+        description: repo.description
+        updated_at: repo.updated_at
+        stargazers_count: repo.stargazers_count
+        language: repo.language
+  )
+  console.log "[github] Found #{starredRepos.length} stars"
+
+  await dropbox.uploadString '/github/stars.json',
+    JSON.stringify starredRepos, null, 2
 
 repos = ->
   console.log "[github] Archiving all #{GITHUB_USERNAME}'s public github repos"
@@ -40,7 +62,6 @@ repos = ->
   console.log "[github] Done archiving repos"
 
 archiveRepo = (repo) ->
-  dropbox = new Dropbox()
   console.log "[#{repo.full_name}] Archiving (#{repo.size}K)"
 
   repoDir = "/github/#{GITHUB_USERNAME}/#{repo.name}"
@@ -71,4 +92,4 @@ archiveRepo = (repo) ->
   console.log "[#{repo.full_name}] Cleaning up"
   await exec "rm -rf temp/#{repo.full_name} temp/#{repo.full_name}.tar.gz"
 
-module.exports = {repos}
+module.exports = {repos, stars}

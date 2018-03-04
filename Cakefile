@@ -11,6 +11,10 @@ asyncTask = (name, description, fn) ->
         await ret
     catch err
       console.error "[#{name}] Task failed: #{err?.message ? JSON.stringify(err)}"
+      if err?.stack
+        console.error err?.stack
+
+asyncTask 'github:stars', 'save list of starred github repos to dropbox', github.stars
 
 asyncTask 'github:repos', 'archive github repos to dropbox', github.repos
 
