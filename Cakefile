@@ -1,6 +1,5 @@
 _ = require 'underscore'
 Dropbox = require './dropbox'
-ITunes = require './itunes'
 MountainProject = require './mountain_project'
 async = require 'async'
 github = require './tasks/github'
