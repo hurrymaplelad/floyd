@@ -5,9 +5,9 @@
   "dependencies": {
     "@octokit/rest": "^14.0.9",
     "async": "~2.6.0",
-    "coffeescript": "^2.2.2",
     "dropbox-v2-api": "^2.1.13",
     "graphql-client": "^2.0.1",
+    "jake": "^8.0.15",
     "nconf": "~0.10.0",
     "node-fetch": "^2.0.0",
     "underscore": "~1.8.3"
@@ -17,6 +17,6 @@
     "mocha": "~5.0.1"
   },
   "scripts": {
-    "test": "mocha --require coffeescript/register 'specs/**/*.spec.coffee'"
+    "test": "mocha --recursive specs"
   }
 }
