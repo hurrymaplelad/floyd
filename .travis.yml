@@ -1,3 +1,8 @@
 language: node_js
 node_js:
-- 'lts/*'
+- lts/*
+deploy:
+  provider: heroku
+  api_key:
+    secure: BUsaT36xh3kteBEAF+4DUI20q2kwWQ2Ga/uWFdJ9UtfkIyvbQRSbkXE49xr0JLeaEiKkPxwk87iBVRWa98oGd3PyznZtRDdOf8WGn8gtu+z8QtXhTPxTP32MFdRdfPjQwmy0GOj29b6HcXk9/HjJCv3AU/tDWwN717IkSr48GIw=
+  app: hurrymaplelad-floyd
