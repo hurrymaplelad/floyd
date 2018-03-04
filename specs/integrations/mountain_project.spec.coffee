@@ -19,7 +19,7 @@ describe 'Mountain Project integration', ->
     beforeEach ->
       @mountainProject = new MountainProject()
 
-    it 'calls back with the list of routes ticked', (done) ->
-      @mountainProject.ticks (ticks) ->
-        expect(ticks).to.match /Ticks for Adam/
-        done()
+    it 'calls back with the list of routes ticked', ->
+      @timeout 10000
+      {tickCount} = await @mountainProject.ticks()
+      expect(tickCount).to.be.greaterThan 0
