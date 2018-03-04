@@ -1,4 +1,3 @@
-
 (function() {
   var octokit, settings;
 
@@ -17,5 +16,4 @@
   }
 
   module.exports = octokit;
-
-}).call(this);
+}.call(this));

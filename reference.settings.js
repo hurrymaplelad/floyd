@@ -1,4 +1,3 @@
-
 (function() {
   module.exports = {
     DBOX_ACCESS_TOKEN: 'XXXXXXXXXXXXXXX',
@@ -7,5 +6,4 @@
     GITHUB_OAUTH_TOKEN: 'XXXXXXXX',
     MOUNTAIN_PROJECT_ID: 'XXXXXXXXX'
   };
-
-}).call(this);
+}.call(this));

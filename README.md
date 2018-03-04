@@ -1,6 +1,7 @@
 ![Jet Force Gemini](docs/floyd.jpg)
 
-[![Build Status](https://travis-ci.org/hurrymaplelad/floyd.svg?branch=master)](https://travis-ci.org/hurrymaplelad/floyd)
+[![Build Status](https://img.shields.io/travis/hurrymaplelad/floyd.svg?branch=master&style=flat-square)](https://travis-ci.org/hurrymaplelad/floyd)
+[![Code Style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 ## Getting Started
 

@@ -1,4 +1,3 @@
-
 (function() {
   var expect, octokit, settings;
 
@@ -13,14 +12,13 @@
     username = settings.GITHUB_USERNAME;
     return it('can list repos', async function() {
       var response;
-      response = (await octokit.repos.getForUser({
+      response = await octokit.repos.getForUser({
         username: username,
         type: 'owner',
         per_page: 5
-      }));
+      });
       expect(response.data).to.not.be.empty;
       return expect(response.data[0].owner.login).to.be(username);
     });
   });
-
-}).call(this);
+}.call(this));

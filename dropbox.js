@@ -1,6 +1,5 @@
-
 (function() {
-    // Chore friendly wrapper around the Dbox library
+  // Chore friendly wrapper around the Dbox library
 
   var Dropbox, Readable, dropboxV2Api, promisify, settings;
 
@@ -25,15 +24,17 @@
 
     async uploadStream(path, dataStream) {
       var meta;
-      meta = (await this.dropbox({
+      meta = await this.dropbox({
         resource: 'files/upload',
         parameters: {
           path: path,
           mode: 'overwrite'
         },
         readStream: dataStream
-      }));
-      console.log(`[dropbox] Wrote ${(meta != null ? meta.size : void 0)} bytes to ${path}`);
+      });
+      console.log(
+        `[dropbox] Wrote ${meta != null ? meta.size : void 0} bytes to ${path}`
+      );
       return meta;
     }
 
@@ -42,7 +43,7 @@
       dataStream = new Readable();
       dataStream.push(data);
       dataStream.push(null);
-      return (await this.uploadStream(path, dataStream));
+      return await this.uploadStream(path, dataStream);
     }
 
     async delete(path) {
@@ -59,23 +60,22 @@
     async getMetadata(path) {
       var err;
       try {
-        return (await this.dropbox({
+        return await this.dropbox({
           resource: 'files/get_metadata',
           parameters: {
             path: path
           }
-        }));
+        });
       } catch (error) {
         err = error;
-        if ((err != null ? err.code : void 0) === 409) { // path doesn't exist
+        if ((err != null ? err.code : void 0) === 409) {
+          // path doesn't exist
           return null;
         }
         throw err;
       }
     }
-
   };
 
   module.exports = Dropbox;
-
-}).call(this);
+}.call(this));

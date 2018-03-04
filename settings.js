@@ -1,4 +1,3 @@
-
 (function() {
   var error, key, nconf, reference, settings;
 
@@ -24,5 +23,4 @@
   }
 
   module.exports = settings;
-
-}).call(this);
+}.call(this));

@@ -14,9 +14,14 @@
   },
   "devDependencies": {
     "expect.js": "~0.3.1",
-    "mocha": "~5.0.1"
+    "mocha": "~5.0.1",
+    "prettier": "1.11.1"
   },
   "scripts": {
     "test": "mocha --recursive specs"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": false
   }
 }

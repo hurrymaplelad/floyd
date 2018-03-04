@@ -1,4 +1,3 @@
-
 (function() {
   var childProcess, exec, promisify, shell;
 
@@ -24,5 +23,4 @@
   };
 
   module.exports = shell;
-
-}).call(this);
+}.call(this));

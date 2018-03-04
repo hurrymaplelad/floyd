@@ -1,4 +1,3 @@
-
 (function() {
   var _concatPages, _query, client, graphQL, settings;
 
@@ -11,9 +10,11 @@
     }
   });
 
+  graphql = () => argurments[0];
+
   _query = async function(queryString, vars) {
     var error, i, len, ref, response;
-    response = (await client.query(queryString, vars));
+    response = await client.query(queryString, vars);
     if (response.errors) {
       ref = response.errors;
       for (i = 0, len = ref.length; i < len; i++) {
@@ -29,11 +30,11 @@
   _concatPages = async function(query) {
     var afterId, all, page;
     afterId = null;
-    page = (await query());
+    page = await query();
     all = page.nodes;
     while (page.pageInfo.hasNextPage) {
       afterId = page.pageInfo.endCursor;
-      page = (await query(afterId));
+      page = await query(afterId);
       all = all.concat(page.nodes);
     }
     return all;
@@ -42,12 +43,36 @@
   graphQL = {
     allRepositoriesContributedTo: async function() {
       var contributedTo;
-      contributedTo = (await _concatPages(this.pageOfRepositoriesContributedTo));
+      contributedTo = await _concatPages(this.pageOfRepositoriesContributedTo);
       return contributedTo;
     },
-    pageOfRepositoriesContributedTo: async(after) => {
+    pageOfRepositoriesContributedTo: async after => {
       var response;
-      response = (await _query("query contribs($after: String) {\n  viewer {\n    repositoriesContributedTo(\n      first: 100,\n      contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY],\n      after: $after\n    ) {\n      nodes {\n        name\n        nameWithOwner\n        pushedAt\n        diskUsage\n        url\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n  }\n}", {after}));
+      response = await _query(
+        `
+        query contribs($after: String) {
+          viewer {
+            repositoriesContributedTo(
+              first: 100,
+              contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY],
+              after: $after
+            ) {
+              nodes {
+                name
+                nameWithOwner
+                pushedAt
+                diskUsage
+                url
+              }
+              pageInfo {
+                endCursor
+                hasNextPage
+              }
+            }
+          }
+        }`,
+        {after}
+      );
       return response.data.viewer.repositoriesContributedTo;
     },
     toRestRepo: function(repo) {
@@ -65,5 +90,4 @@
   };
 
   module.exports = graphQL;
-
-}).call(this);
+}.call(this));
