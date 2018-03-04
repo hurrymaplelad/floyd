@@ -5,7 +5,7 @@
 
 ## Getting Started
 
-Tasks are defined in the `Jakefile`.  Try listing them with
+Tasks are defined in the `Jakefile`. Try listing them with
 
     ❱❭ jake --tasks
 

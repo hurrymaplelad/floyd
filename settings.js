@@ -1,5 +1,5 @@
 (function() {
-  var error, key, nconf, reference, settings;
+  var key, nconf, reference, settings;
 
   nconf = require('nconf');
 
@@ -10,10 +10,8 @@
   try {
     nconf.defaults(require('./local.settings'));
   } catch (error1) {
-    error = error1;
+    // ignore
   }
-
-  // ignore
 
   // Extract settings to flat object for pretty access
   settings = {};

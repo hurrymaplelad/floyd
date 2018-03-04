@@ -10,8 +10,6 @@
     }
   });
 
-  graphql = () => argurments[0];
-
   _query = async function(queryString, vars) {
     var error, i, len, ref, response;
     response = await client.query(queryString, vars);
