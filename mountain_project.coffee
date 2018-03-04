@@ -1,18 +1,8 @@
 #
 # Chore friendly wrapper around mountain project
 #
-
-_ = require 'underscore'
 fetch = require 'node-fetch'
 settings = require './settings'
-
-failOnError = (cb) ->
-  (err, response, rest...) ->
-    if err?
-      throw new Error(JSON.stringify(err))
-    if response?.status? and response.status isnt 'ok'
-      throw new Error(JSON.stringify response)
-    cb response?.result ? response, rest...
 
 class MountainProject
 

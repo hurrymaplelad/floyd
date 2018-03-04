@@ -1,12 +1,20 @@
-_ = require 'underscore'
 Dropbox = require './dropbox'
 MountainProject = require './mountain_project'
-async = require 'async'
 github = require './tasks/github'
 
-task 'github:repos', 'archive github repos to dropbox', github.repos
+# Wrap task to handle async functions
+asyncTask = (name, description, fn) ->
+  task name, description, ->
+    try
+      ret = fn()
+      if typeof ret?.then == 'function'
+        await ret
+    catch err
+      console.error "[#{name}] Task failed: #{err?.message ? JSON.stringify(err)}"
 
-task 'mp:ticks', 'write Mountain Project route ticks to dropbox', ->
+asyncTask 'github:repos', 'archive github repos to dropbox', github.repos
+
+asyncTask 'mp:ticks', 'write Mountain Project route ticks to dropbox', ->
   mp = new MountainProject()
   console.log "[mountainproject] Listing user #{mp.id} ticks"
   {csv, tickCount} = await mp.ticks()

@@ -2,7 +2,6 @@
 # Chore friendly wrapper around the Dbox library
 #
 
-_ = require 'underscore'
 dropboxV2Api = require 'dropbox-v2-api'
 settings = require './settings'
 {Readable} = require 'stream'
