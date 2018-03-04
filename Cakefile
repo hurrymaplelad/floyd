@@ -6,7 +6,7 @@ github = require './tasks/github'
 asyncTask = (name, description, fn) ->
   task name, description, ->
     try
-      ret = fn()
+      ret = fn(...arguments)
       if typeof ret?.then == 'function'
         await ret
     catch err
@@ -17,6 +17,9 @@ asyncTask = (name, description, fn) ->
 asyncTask 'github:stars', 'save list of starred github repos to dropbox', github.stars
 
 asyncTask 'github:repos', 'archive github repos to dropbox', github.repos
+
+option '-r', '--repo [NAME]', 'the full name of a repo to backup. ex: hmlad/example'
+asyncTask 'github:repo', 'archive a single github repo to dropbox', github.repo
 
 asyncTask 'mp:ticks', 'write Mountain Project route ticks to dropbox', ->
   mp = new MountainProject()

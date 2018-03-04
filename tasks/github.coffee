@@ -55,5 +55,9 @@ tasks =
         console.error "[#{repo.full_name}] #{err?.message ? JSON.stringify(err)}"
     console.log "[github] Done archiving repos"
 
+  repo: (options) ->
+    [owner, repo] = options.repo.split '/'
+    {data: repo} = await octokit.repos.get {owner, repo}
+    await archiveRepo repo
 
 module.exports = tasks
