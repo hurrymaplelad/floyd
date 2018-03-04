@@ -1,70 +1,74 @@
 fs = require 'fs'
-{exec} = require 'child_process'
-Github = require 'github'
+childProcess = require 'child_process'
+octokit = require '../github'
 Dropbox = require '../dropbox'
-{eachLimit, series} = require 'async'
 {GITHUB_USERNAME} = require '../settings'
+{promisify} = require 'util'
+asyncjs = require 'async'
 
-github = new Github(version: '3.0.0')
+eachLimit = promisify asyncjs.eachLimit
+exec = promisify childProcess.exec
 
-failOnError = (cb) ->
-  (err, data) ->
-    if err?
-      throw new Error(err)
-    cb data
+concatPageData = (method) ->
+  response = await method
+  data = response.data
+  while octokit.hasNextPage response
+    response = await octokit.getNextPage response
+    data = data.concat response.data
+  return data
 
 repos = ->
-  console.log "Archiving all #{GITHUB_USERNAME}'s public github repos"
+  console.log "[github] Archiving all #{GITHUB_USERNAME}'s public github repos"
 
-  maxPageSize = 90
-  maxSimultaneousCheckouts = 1
+  maxConcurrentUploads = 5
 
-  github.repos.getFromUser
-    user: GITHUB_USERNAME
+  repos = await concatPageData octokit.repos.getForUser
+    username: GITHUB_USERNAME
     type: 'owner'
-    per_page: maxPageSize
-    failOnError (repos) =>
-      if repos.length >= maxPageSize
-        throw new Error('Too many github repos.  Time to start paging')
+    per_page: 75 # bump up the default to consume less of our quota
 
-      repos = repos.filter (repo) -> not repo.fork
-      console.log "Found #{repos.length} repos"
+  repos = repos.filter (repo) -> not repo.fork
+  console.log "[github] Found #{repos.length} repos"
 
-      eachLimit repos, maxSimultaneousCheckouts, archiveRepo, failOnError ->
-        console.log "Done archiving repos"
+  await eachLimit repos, maxConcurrentUploads, (repo) ->
+    try
+      await archiveRepo repo
+    catch err
+      console.error "[#{repo.full_name}] BACKUP FAILED"
+      console.error "[#{repo.full_name}] #{err?.message ? JSON.stringify(err)}"
 
-archiveRepo = (repo, done) ->
-  {name, clone_url, size} = repo
-  console.log "Archiving #{name} (#{size}K)"
+  console.log "[github] Done archiving repos"
 
-  if size > 10000
-    throw new Error "Repo #{name} is too big to archive in memory."
+archiveRepo = (repo) ->
+  dropbox = new Dropbox()
+  console.log "[#{repo.full_name}] Archiving (#{repo.size}K)"
+
+  repoDir = "/github/#{GITHUB_USERNAME}/#{repo.name}"
+  archivePath = "#{repoDir}/#{repo.name}.tar.gz"
 
   # Check if repo has changed since last backup
-  box = new Dropbox().client
-  box.metadata "github/#{name}.tar.gz", (err, meta) ->
-    if meta?.modified and (not meta.is_deleted) and (new Date(meta.modified) >= new Date(repo.updated_at))
-      console.log "Skipping, unchanged"
-      done()
-    else
-      series [
-        (next) ->
-          # pre clean in case we have stale file from previous run
-          exec "rm -rf temp/#{name} temp/#{name}.tar.gz", next
-        (next) ->
-          exec "git clone #{clone_url} temp/#{name}", next
-        (next) ->
-          exec "tar -czf #{name}.tar.gz #{name}", cwd: 'temp', next
-        (next) ->
-          box.put(
-            "github/#{name}.tar.gz",
-            fs.readFileSync("temp/#{name}.tar.gz"),
-            ->
-              next()
-          )
-        (next) ->
-          exec "rm -rf temp/#{name} temp/#{name}.tar.gz", next
-      ], done
+  meta = await dropbox.getMetadata archivePath
+  if meta?.server_modified \
+     and (not meta.is_deleted) \
+     and (new Date(meta.server_modified) >= new Date(repo.updated_at))
+    console.log "[#{repo.full_name}] Skipping. Unchanged since #{new Date(repo.updated_at)})"
+    return
+
+  await dropbox.uploadString "#{repoDir}/github_meta.json",
+    JSON.stringify repo, null, 2
+
+  # pre clean in case we have stale file from previous run
+  await exec "rm -rf temp/#{repo.full_name} temp/#{repo.full_name}.tar.gz"
+  await exec "mkdir -p #{repo.full_name}"
+  await exec "git clone #{repo.clone_url} temp/#{repo.full_name}"
+  console.log "[#{repo.full_name}] Tarballing"
+  await exec "tar -czf #{repo.name}.tar.gz #{repo.name}", cwd: "temp/#{repo.owner.login}"
+
+  archiveStream = fs.createReadStream "temp/#{repo.full_name}.tar.gz"
+  console.log "[#{repo.full_name}] Starting upload"
+  await dropbox.uploadStream archivePath, archiveStream
+
+  console.log "[#{repo.full_name}] Cleaning up"
+  await exec "rm -rf temp/#{repo.full_name} temp/#{repo.full_name}.tar.gz"
 
 module.exports = {repos}
-

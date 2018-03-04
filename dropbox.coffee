@@ -21,8 +21,9 @@ class Dropbox
       resource: 'files/upload',
       parameters:
           path: path
+          mode: 'overwrite'
       readStream: dataStream
-    console.log "wrote #{meta?.size} bytes to #{path}"
+    console.log "[dropbox] Wrote #{meta?.size} bytes to #{path}"
     return meta
 
   uploadString: (path, data) ->
@@ -36,6 +37,18 @@ class Dropbox
       resource: 'files/delete_v2'
       parameters:
           path: path
-    console.log "deleted #{path}"
+    console.log "[dropbox] Deleted #{path}"
+
+  # Resolves to null for non-existant paths
+  getMetadata: (path) ->
+    try
+      return await @dropbox
+        resource: 'files/get_metadata'
+        parameters:
+          path: path
+    catch err
+      if err?.code == 409 # path doesn't exist
+        return null
+      throw err
 
 module.exports = Dropbox
