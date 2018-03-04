@@ -1,5 +1,7 @@
 ![Jet Force Gemini](docs/floyd.jpg)
 
+[![Build Status](https://travis-ci.org/hurrymaplelad/floyd.svg?branch=master)](https://travis-ci.org/hurrymaplelad/floyd)
+
 ## Getting Started
 
 Tasks are defined in the `Cakefile`.  Try listing them with
