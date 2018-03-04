@@ -9,7 +9,6 @@
     "dropbox-v2-api": "^2.1.13",
     "nconf": "~0.10.0",
     "node-fetch": "^2.0.0",
-    "plist": "~2.1.0",
     "underscore": "~1.8.3"
   },
   "devDependencies": {
