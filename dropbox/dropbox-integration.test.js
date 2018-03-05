@@ -1,5 +1,5 @@
 const expect = require('expect.js');
-const Dropbox = require('../../dropbox');
+const Dropbox = require('./client');
 let dropbox;
 
 before(function() {
@@ -14,6 +14,5 @@ describe('Dropbox integration', function() {
 });
 
 after(async function() {
-  this.timeout(5000);
   return await dropbox.delete('/tmp');
 });

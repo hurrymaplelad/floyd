@@ -1,5 +1,5 @@
-const Dropbox = require('../dropbox');
-const MountainProject = require('../mountain_project');
+const Dropbox = require('../dropbox/client');
+const MountainProject = require('./client');
 
 const mountainProject = yargs => {
   yargs.command({

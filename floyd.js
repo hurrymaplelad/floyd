@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const yargs = require('yargs');
-[require('./commands/github'), require('./commands/mountain_project')].forEach(
-  builder => builder(yargs)
+[require('./github'), require('./mountain_project')].forEach(builder =>
+  builder(yargs)
 );
 
-yargs.demandCommand().argv;
+yargs.demandCommand().strict().argv;

@@ -1,6 +1,6 @@
 const expect = require('expect.js');
-const settings = require('../../settings');
-const MountainProject = require('../../mountain_project');
+const settings = require('../settings');
+const MountainProject = require('./client');
 
 describe('Mountain Project integration', function() {
   describe('without an id configured', function() {

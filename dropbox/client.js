@@ -1,5 +1,5 @@
 const dropboxV2Api = require('dropbox-v2-api');
-const settings = require('./settings');
+const settings = require('../settings');
 const {Readable} = require('stream');
 const {promisify} = require('util');
 

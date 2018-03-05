@@ -1,5 +1,5 @@
 const octokit = require('@octokit/rest')();
-const settings = require('../settings');
+const settings = require('../../settings');
 
 if (settings.GITHUB_OAUTH_TOKEN) {
   octokit.authenticate({

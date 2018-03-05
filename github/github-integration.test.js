@@ -1,6 +1,6 @@
 const expect = require('expect.js');
-const octokit = require('../../github');
-const settings = require('../../settings');
+const octokit = require('./client');
+const settings = require('../settings');
 
 describe('Github integration', function() {
   const username = settings.GITHUB_USERNAME;

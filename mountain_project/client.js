@@ -2,7 +2,7 @@
  * Chore friendly wrapper around mountain project
  */
 const fetch = require('node-fetch');
-const settings = require('./settings');
+const settings = require('../settings');
 
 class MountainProject {
   constructor() {

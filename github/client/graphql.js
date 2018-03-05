@@ -1,4 +1,4 @@
-const settings = require('../settings');
+const settings = require('../../settings');
 
 const client = require('graphql-client')({
   url: 'https://api.github.com/graphql',

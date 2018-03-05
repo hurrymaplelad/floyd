@@ -7,11 +7,11 @@
 
 List tasks with
 
-    ❱❭ ./floyd help
+    ❱❭ ./floyd.js help
 
 ## Configuration
 
-Check `reference.settings.js` for all API keys configurable as environment variables or in `local.settings.js`.
+Check `settings/reference.js` for all API keys configurable as environment variables. Settings can also be set in `settings/local.js`. `cp settings/reference.js settings/local.js` to get started.
 
 Grab a personal Dropbox keypair: https://blogs.dropbox.com/developers/2014/05/geerate-an-access-token-for-your-own-account/
 

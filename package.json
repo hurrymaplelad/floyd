@@ -29,7 +29,7 @@
     "lint": "yarn run eslint & yarn run prettier -l & wait",
     "prettier": "prettier **/*.{json,md}",
     "eslint": "eslint .",
-    "mocha": "mocha --recursive specs"
+    "mocha": "mocha --timeout 5000 **/*.test.js"
   },
   "prettier": {
     "singleQuote": true,

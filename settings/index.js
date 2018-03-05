@@ -1,11 +1,11 @@
 const nconf = require('nconf');
-const reference = require('./reference.settings');
+const reference = require('./reference');
 
 nconf.env();
 
 try {
-  nconf.defaults(require('./local.settings'));
-} catch (error1) {
+  nconf.defaults(require('./local'));
+} catch (error) {
   // ignore
 }
 

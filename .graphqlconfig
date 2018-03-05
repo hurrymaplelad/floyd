@@ -1,5 +1,5 @@
 {
-  "schemaPath": "github/github_schema.graphql",
+  "schemaPath": "github/client/github_schema.graphql",
   "extensions": {
     "endpoints": {
       "github": "https://api.github.com/graphql"
