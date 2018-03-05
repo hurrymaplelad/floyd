@@ -20,12 +20,11 @@ namespace('github', () => {
 namespace('mp', () => {
   desc('write Mountain Project route ticks to dropbox');
   task('ticks', [], async function() {
-    var csv, dropbox, mp, tickCount;
-    mp = new MountainProject();
+    const mp = new MountainProject();
     console.log(`[mountainproject] Listing user ${mp.id} ticks`);
-    ({csv, tickCount} = await mp.ticks());
+    const {csv, tickCount} = await mp.ticks();
     console.log(`[mountainproject] Found ${tickCount} ticks`);
-    dropbox = new Dropbox();
+    const dropbox = new Dropbox();
     return dropbox.uploadString('/mountain-project/ticks.csv', csv);
   });
 });

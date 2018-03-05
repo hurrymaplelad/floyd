@@ -1,24 +1,17 @@
-(function() {
-  var key, nconf, reference, settings;
+const nconf = require('nconf');
+const reference = require('./reference.settings');
 
-  nconf = require('nconf');
+nconf.env();
 
-  reference = require('./reference.settings');
+try {
+  nconf.defaults(require('./local.settings'));
+} catch (error1) {
+  // ignore
+}
 
-  nconf.env();
+// Extract settings to flat object for pretty access
+const settings = {};
 
-  try {
-    nconf.defaults(require('./local.settings'));
-  } catch (error1) {
-    // ignore
-  }
-
-  // Extract settings to flat object for pretty access
-  settings = {};
-
-  for (key in reference) {
-    settings[key] = nconf.get(key);
-  }
-
-  module.exports = settings;
-}.call(this));
+for (const key in reference) {
+  settings[key] = nconf.get(key);
+}

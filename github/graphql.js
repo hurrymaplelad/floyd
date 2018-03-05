@@ -1,53 +1,46 @@
-(function() {
-  var _concatPages, _query, client, graphQL, settings;
+const settings = require('../settings');
 
-  settings = require('../settings');
+const client = require('graphql-client')({
+  url: 'https://api.github.com/graphql',
+  headers: {
+    Authorization: 'Bearer ' + settings.GITHUB_OAUTH_TOKEN
+  }
+});
 
-  client = require('graphql-client')({
-    url: 'https://api.github.com/graphql',
-    headers: {
-      Authorization: 'Bearer ' + settings.GITHUB_OAUTH_TOKEN
+async function _query(queryString, vars) {
+  const response = await client.query(queryString, vars);
+  if (response.errors) {
+    for (const error of response.errors) {
+      console.error(`[github] GraphQL error: ${error.message}`);
     }
-  });
+    console.error(response.highlightQuery);
+    throw response.errors[0];
+  }
+  return response;
+}
 
-  _query = async function(queryString, vars) {
-    var error, i, len, ref, response;
-    response = await client.query(queryString, vars);
-    if (response.errors) {
-      ref = response.errors;
-      for (i = 0, len = ref.length; i < len; i++) {
-        error = ref[i];
-        console.error(`[github] GraphQL error: ${error.message}`);
-      }
-      console.error(response.highlightQuery);
-      throw response.errors[0];
-    }
-    return response;
-  };
+async function _concatPages(query) {
+  let afterId = null;
+  let page = await query();
+  let all = page.nodes;
+  while (page.pageInfo.hasNextPage) {
+    afterId = page.pageInfo.endCursor;
+    page = await query(afterId);
+    all = all.concat(page.nodes);
+  }
+  return all;
+}
 
-  _concatPages = async function(query) {
-    var afterId, all, page;
-    afterId = null;
-    page = await query();
-    all = page.nodes;
-    while (page.pageInfo.hasNextPage) {
-      afterId = page.pageInfo.endCursor;
-      page = await query(afterId);
-      all = all.concat(page.nodes);
-    }
-    return all;
-  };
-
-  graphQL = {
-    allRepositoriesContributedTo: async function() {
-      var contributedTo;
-      contributedTo = await _concatPages(this.pageOfRepositoriesContributedTo);
-      return contributedTo;
-    },
-    pageOfRepositoriesContributedTo: async after => {
-      var response;
-      response = await _query(
-        `
+const graphQL = {
+  allRepositoriesContributedTo: async function() {
+    const contributedTo = await _concatPages(
+      this.pageOfRepositoriesContributedTo
+    );
+    return contributedTo;
+  },
+  pageOfRepositoriesContributedTo: async after => {
+    const response = await _query(
+      `
         query contribs($after: String) {
           viewer {
             repositoriesContributedTo(
@@ -69,23 +62,22 @@
             }
           }
         }`,
-        {after}
-      );
-      return response.data.viewer.repositoriesContributedTo;
-    },
-    toRestRepo: function(repo) {
-      return {
-        name: repo.name,
-        full_name: repo.nameWithOwner,
-        pushed_at: repo.pushedAt,
-        size: repo.diskUsage,
-        clone_url: `${repo.url}.git`,
-        owner: {
-          login: repo.nameWithOwner.split('/')[0]
-        }
-      };
-    }
-  };
+      {after}
+    );
+    return response.data.viewer.repositoriesContributedTo;
+  },
+  toRestRepo: function(repo) {
+    return {
+      name: repo.name,
+      full_name: repo.nameWithOwner,
+      pushed_at: repo.pushedAt,
+      size: repo.diskUsage,
+      clone_url: `${repo.url}.git`,
+      owner: {
+        login: repo.nameWithOwner.split('/')[0]
+      }
+    };
+  }
+};
 
-  module.exports = graphQL;
-}.call(this));
+module.exports = graphQL;
