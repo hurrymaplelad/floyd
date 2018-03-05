@@ -4,27 +4,28 @@ const MountainProject = require('./client');
 
 describe('Mountain Project integration', function() {
   describe('without an id configured', function() {
+    const originalId = settings.MOUNTAIN_PROJECT_ID;
+
     beforeEach(function() {
-      this.originalId = settings.MOUNTAIN_PROJECT_ID;
-      return (settings.MOUNTAIN_PROJECT_ID = void 0);
+      delete settings.MOUNTAIN_PROJECT_ID;
     });
+
+    it('throws', function() {
+      expect(() => new MountainProject()).to.throwException();
+    });
+
     afterEach(function() {
-      return (settings.MOUNTAIN_PROJECT_ID = this.originalId);
-    });
-    return it('throws', function() {
-      return expect(function() {
-        return new MountainProject();
-      }).to.throwException();
+      settings.MOUNTAIN_PROJECT_ID = originalId;
     });
   });
-  return describe('::ticks', function() {
-    beforeEach(function() {
-      return (this.mountainProject = new MountainProject());
-    });
-    return it('calls back with the list of routes ticked', async function() {
+
+  describe('::ticks', function() {
+    const mountainProject = new MountainProject();
+
+    it('calls back with the list of routes ticked', async function() {
       this.timeout(10000);
-      const {tickCount} = await this.mountainProject.ticks();
-      return expect(tickCount).to.be.greaterThan(0);
+      const {tickCount} = await mountainProject.ticks();
+      expect(tickCount).to.be.greaterThan(0);
     });
   });
 });
