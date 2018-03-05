@@ -279,6 +279,13 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
+cross-fetch@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-2.0.0.tgz#a17475449561e0f325146cea636a8619efb9b382"
+  dependencies:
+    node-fetch "2.0.0"
+    whatwg-fetch "2.0.3"
+
 cross-spawn@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-5.1.0.tgz#e8bd0efee58fcff6f8f94510a0a554bbfa235449"
@@ -366,6 +373,13 @@ eslint-config-prettier@^2.9.0:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-2.9.0.tgz#5ecd65174d486c22dff389fe036febf502d468a3"
   dependencies:
     get-stdin "^5.0.1"
+
+eslint-plugin-graphql@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-graphql/-/eslint-plugin-graphql-1.5.0.tgz#1f0861b6499906f7ce153f9e83633659e4374ef6"
+  dependencies:
+    graphql-config "~1.0.9"
+    lodash "^4.11.1"
 
 eslint-plugin-prettier@^2.6.0:
   version "2.6.0"
@@ -593,6 +607,28 @@ graphql-client@^2.0.1:
   dependencies:
     isomorphic-fetch "^2.2.1"
 
+graphql-config@~1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/graphql-config/-/graphql-config-1.0.9.tgz#8fa416a7c2bdb8f62f441324775dd3ff8a266652"
+  dependencies:
+    graphql "^0.11.7"
+    graphql-request "^1.4.0"
+    js-yaml "^3.10.0"
+    minimatch "^3.0.4"
+    rimraf "^2.6.2"
+
+graphql-request@^1.4.0:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/graphql-request/-/graphql-request-1.5.1.tgz#cccdf5cce6432ca062b90f7b63793c77c821ff9a"
+  dependencies:
+    cross-fetch "2.0.0"
+
+graphql@^0.11.7:
+  version "0.11.7"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.11.7.tgz#e5abaa9cb7b7cccb84e9f0836bf4370d268750c6"
+  dependencies:
+    iterall "1.1.3"
+
 growl@1.10.3:
   version "1.10.3"
   resolved "https://registry.yarnpkg.com/growl/-/growl-1.10.3.tgz#1926ba90cf3edfe2adb4927f5880bc22c66c790f"
@@ -766,6 +802,10 @@ isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
+iterall@1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/iterall/-/iterall-1.1.3.tgz#1cbbff96204056dde6656e2ed2e2226d0e6d72c9"
+
 jake@^8.0.15:
   version "8.0.15"
   resolved "https://registry.yarnpkg.com/jake/-/jake-8.0.15.tgz#f0da7d58e790ac1a8f86e6ee0f193e5d9230eabb"
@@ -784,7 +824,7 @@ js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
-js-yaml@^3.9.1:
+js-yaml@^3.10.0, js-yaml@^3.9.1:
   version "3.10.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.10.0.tgz#2e78441646bd4682e963f22b6e92823c309c62dc"
   dependencies:
@@ -833,7 +873,7 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-lodash@^4.14.0, lodash@^4.17.4, lodash@^4.3.0:
+lodash@^4.11.1, lodash@^4.14.0, lodash@^4.17.4, lodash@^4.3.0:
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
@@ -910,16 +950,16 @@ nconf@~0.10.0:
     secure-keys "^1.0.0"
     yargs "^3.19.0"
 
+node-fetch@2.0.0, node-fetch@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.0.0.tgz#982bba43ecd4f2922a29cc186a6bbb0bb73fcba6"
+
 node-fetch@^1.0.1:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-1.7.3.tgz#980f6f72d85211a5347c6b2bc18c5b84c3eb47ef"
   dependencies:
     encoding "^0.1.11"
     is-stream "^1.0.1"
-
-node-fetch@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.0.0.tgz#982bba43ecd4f2922a29cc186a6bbb0bb73fcba6"
 
 number-is-nan@^1.0.0:
   version "1.0.1"
@@ -1081,7 +1121,7 @@ restore-cursor@^2.0.0:
     onetime "^2.0.0"
     signal-exit "^3.0.2"
 
-rimraf@^2.2.8:
+rimraf@^2.2.8, rimraf@^2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.6.2.tgz#2ed8150d24a16ea8651e6d6ef0f47c4158ce7a36"
   dependencies:
@@ -1303,7 +1343,7 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-whatwg-fetch@>=0.10.0:
+whatwg-fetch@2.0.3, whatwg-fetch@>=0.10.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz#9c84ec2dcf68187ff00bc64e1274b442176e1c84"
 

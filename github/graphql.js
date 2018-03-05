@@ -7,6 +7,9 @@ const client = require('graphql-client')({
   }
 });
 
+// Pass-through template tag triggering graphQL syntax support
+const gql = strings => strings.join('');
+
 async function _query(queryString, vars) {
   const response = await client.query(queryString, vars);
   if (response.errors) {
@@ -40,12 +43,12 @@ const graphQL = {
   },
   pageOfRepositoriesContributedTo: async after => {
     const response = await _query(
-      `
+      gql`
         query contribs($after: String) {
           viewer {
             repositoriesContributedTo(
-              first: 100,
-              contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY],
+              first: 100
+              contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY]
               after: $after
             ) {
               nodes {
@@ -61,7 +64,8 @@ const graphQL = {
               }
             }
           }
-        }`,
+        }
+      `,
       {after}
     );
     return response.data.viewer.repositoriesContributedTo;

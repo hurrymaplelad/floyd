@@ -15,3 +15,5 @@ const settings = {};
 for (const key in reference) {
   settings[key] = nconf.get(key);
 }
+
+module.exports = settings;
