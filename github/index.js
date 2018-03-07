@@ -53,7 +53,13 @@ const github = function(yargs) {
     .command({
       command: 'github:repo <repo>',
       describe: 'Archive a single github repo to dropbox',
-      builder: yargs => yargs.example('$0 github:repo hmlad/floyd'),
+      builder: yargs =>
+        yargs
+          .example('$0 github:repo hmlad/floyd')
+          .positional('repo', {
+            describe: 'Owner and repo name (ex: hmlad/floyd)'
+          })
+          .demand('repo'),
       handler: async function(argv) {
         const [owner, repoName] = argv.repo.split('/');
         const {data: repo} = await octokit.repos.get({owner, repo: repoName});

@@ -8,9 +8,11 @@
     "dropbox-v2-api": "^2.1.13",
     "graphql": "^0.11.7",
     "graphql-client": "^2.0.1",
+    "luxon": "^0.5.3",
     "nconf": "~0.10.0",
     "node-fetch": "^2.0.0",
-    "underscore": "~1.8.3",
+    "pepper-mint": "^1.7.2",
+    "underscore": "^1.8.3",
     "yargs": "^11.0.0"
   },
   "devDependencies": {
@@ -36,7 +38,10 @@
     "bracketSpacing": false
   },
   "eslintConfig": {
-    "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+    "extends": [
+      "eslint:recommended",
+      "plugin:prettier/recommended"
+    ],
     "env": {
       "node": true,
       "es6": true,
@@ -50,6 +55,8 @@
       "no-var": "error",
       "graphql/template-strings": "error"
     },
-    "plugins": ["graphql"]
+    "plugins": [
+      "graphql"
+    ]
   }
 }
