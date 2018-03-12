@@ -3,12 +3,6 @@ const reference = require('./reference');
 
 nconf.env();
 
-try {
-  nconf.defaults(require('./local'));
-} catch (error) {
-  // ignore
-}
-
 // Extract settings to flat object for pretty access
 const settings = {};
 
