@@ -6,6 +6,7 @@
     "@octokit/rest": "^14.0.9",
     "async": "~2.6.0",
     "dropbox-v2-api": "^2.1.13",
+    "goodreads-api-node": "hurrymaplelad/goodreads-api-node#access-token",
     "graphql": "^0.11.7",
     "graphql-client": "^2.0.1",
     "luxon": "^0.5.3",
@@ -40,7 +41,10 @@
     "bracketSpacing": false
   },
   "eslintConfig": {
-    "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+    "extends": [
+      "eslint:recommended",
+      "plugin:prettier/recommended"
+    ],
     "env": {
       "node": true,
       "es6": true,
@@ -54,6 +58,8 @@
       "no-var": "error",
       "graphql/template-strings": "error"
     },
-    "plugins": ["graphql"]
+    "plugins": [
+      "graphql"
+    ]
   }
 }

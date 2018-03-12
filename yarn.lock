@@ -680,6 +680,24 @@ globby@^6.1.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
+goodreads-api-node@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/goodreads-api-node/-/goodreads-api-node-0.0.5.tgz#42e0b45c84281c0b288a53808a0717c3c7add79e"
+  dependencies:
+    oauth "^0.9.15"
+    query-string "^4.3.1"
+    request "^2.79.0"
+    xml2js "^0.4.17"
+
+goodreads-api-node@hurrymaplelad/goodreads-api-node#access-token:
+  version "0.0.5"
+  resolved "https://codeload.github.com/hurrymaplelad/goodreads-api-node/tar.gz/2a7813a175e0e09e36860b5890382af18a103fa2"
+  dependencies:
+    oauth "^0.9.15"
+    query-string "^4.3.1"
+    request "^2.79.0"
+    xml2js "^0.4.17"
+
 graceful-fs@^4.1.2:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
@@ -1091,7 +1109,11 @@ oauth-sign@~0.8.2:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.8.2.tgz#46a6ab7f0aead8deae9ec0565780b7d4efeb9d43"
 
-object-assign@^4.0.1:
+oauth@^0.9.15:
+  version "0.9.15"
+  resolved "https://registry.yarnpkg.com/oauth/-/oauth-0.9.15.tgz#bd1fefaf686c96b75475aed5196412ff60cfb9c1"
+
+object-assign@^4.0.1, object-assign@^4.1.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
@@ -1255,6 +1277,13 @@ qs@~6.5.1:
   version "6.5.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.1.tgz#349cdf6eef89ec45c12d7d5eb3fc0c870343a6d8"
 
+query-string@^4.3.1:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-4.3.4.tgz#bbb693b9ca915c232515b228b1a02b609043dbeb"
+  dependencies:
+    object-assign "^4.1.0"
+    strict-uri-encode "^1.0.0"
+
 readable-stream@^2.2.2:
   version "2.3.5"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.5.tgz#b4f85003a938cbb6ecbce2a124fb1012bd1a838d"
@@ -1278,7 +1307,7 @@ readable-stream@~2.0.6:
     string_decoder "~0.10.x"
     util-deprecate "~1.0.1"
 
-request@2.83.0, request@^2.81.0, request@^2.83.0:
+request@2.83.0, request@^2.79.0, request@^2.81.0, request@^2.83.0:
   version "2.83.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.83.0.tgz#ca0b65da02ed62935887808e6f510381034e3356"
   dependencies:
@@ -1425,6 +1454,10 @@ sshpk@^1.7.0:
     ecc-jsbn "~0.1.1"
     jsbn "~0.1.0"
     tweetnacl "~0.14.0"
+
+strict-uri-encode@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
 
 string-width@^1.0.1:
   version "1.0.2"
