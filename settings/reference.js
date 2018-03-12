@@ -7,5 +7,8 @@ module.exports = {
   MINT_USERNAME: 'XXXXXXXX',
   MINT_PASS: 'XXXXXXXX',
   MINT_COOKIE: 'XXXXXXXX',
-  MOUNTAIN_PROJECT_ID: 'XXXXXXXXX'
+  MOUNTAIN_PROJECT_ID: 'XXXXXXXXX',
+  // https://rclone.org/commands/rclone_config/
+  RCLONE_CONFIG_DROPBOX_TOKEN: '',
+  RCLONE_CONFIG_GDOCS_TOKEN: ''
 };
