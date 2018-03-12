@@ -32,7 +32,8 @@
     "prettier": "prettier **/*.{json,md}",
     "eslint": "eslint .",
     "mocha": "mocha --timeout 5000 **/*.test.js",
-    "rclone": "rclone --config rclone.conf"
+    "rclone": "rclone --config rclone.conf",
+    "gdocs": "yarn run rclone copy gdocs: dropbox:Apps/rclone/gdocs"
   },
   "prettier": {
     "singleQuote": true,
