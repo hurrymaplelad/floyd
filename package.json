@@ -31,17 +31,15 @@
     "lint": "yarn run eslint & yarn run prettier -l & wait",
     "prettier": "prettier **/*.{json,md}",
     "eslint": "eslint .",
-    "mocha": "mocha --timeout 5000 **/*.test.js"
+    "mocha": "mocha --timeout 5000 **/*.test.js",
+    "rclone": "rclone --config rclone.conf"
   },
   "prettier": {
     "singleQuote": true,
     "bracketSpacing": false
   },
   "eslintConfig": {
-    "extends": [
-      "eslint:recommended",
-      "plugin:prettier/recommended"
-    ],
+    "extends": ["eslint:recommended", "plugin:prettier/recommended"],
     "env": {
       "node": true,
       "es6": true,
@@ -55,8 +53,6 @@
       "no-var": "error",
       "graphql/template-strings": "error"
     },
-    "plugins": [
-      "graphql"
-    ]
+    "plugins": ["graphql"]
   }
 }
