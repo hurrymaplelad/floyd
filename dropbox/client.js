@@ -11,7 +11,7 @@ async function unlessDoesNotExist(asyncFn) {
     return await asyncFn();
   } catch (error) {
     if ((error && error.code) === 409) {
-      // path doesn't exist
+      logger.info("Path doesn't exist - skipping");
       return null;
     }
     throw error;
@@ -79,11 +79,14 @@ class Dropbox {
   }
 
   async delete(path) {
-    await this.dropboxAsPromised({
-      resource: 'files/delete_v2',
-      parameters: {path},
+    return await unlessDoesNotExist(async () => {
+      const response = await this.dropboxAsPromised({
+        resource: 'files/delete',
+        parameters: {path},
+      });
+      logger.info(`Deleted ${path}`);
+      return response;
     });
-    return logger.info(`Deleted ${path}`);
   }
 
   // Resolves to null for non-existant paths

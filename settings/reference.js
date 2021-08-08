@@ -16,4 +16,6 @@ module.exports = {
   // https://rclone.org/commands/rclone_config/
   RCLONE_CONFIG_DROPBOX_TOKEN: '',
   RCLONE_CONFIG_GDOCS_TOKEN: '',
+  // https://todoist.com/prefs/integrations
+  TODOIST_API_KEY: 'XXXXXXXXX',
 };
