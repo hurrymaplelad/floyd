@@ -3,7 +3,7 @@ const settings = require('../../settings');
 const client = require('graphql-client')({
   url: 'https://api.github.com/graphql',
   headers: {
-    Authorization: 'Bearer ' + settings.GITHUB_OAUTH_TOKEN,
+    Authorization: 'Bearer ' + settings.GITHUB_ACCESS_TOKEN,
   },
 });
 

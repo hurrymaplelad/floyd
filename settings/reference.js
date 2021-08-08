@@ -1,8 +1,9 @@
 module.exports = {
+  LOG_LEVEL: 'debug|info|*warn|error',
   DBOX_ACCESS_TOKEN: 'XXXXXXXXXXXXXXX',
   GITHUB_USERNAME: 'XXXXXXXX',
   // https://github.com/settings/tokens
-  GITHUB_OAUTH_TOKEN: 'XXXXXXXX',
+  GITHUB_ACCESS_TOKEN: 'XXXXXXXX',
   // https://www.goodreads.com/api/keys
   GOODREADS_USERID: 'XXXXXX',
   GOODREADS_APP_KEY: 'XXXXXX',

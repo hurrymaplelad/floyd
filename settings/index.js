@@ -1,5 +1,6 @@
 const nconf = require('nconf');
 const reference = require('./reference');
+const LogLevels = require('./log_levels');
 
 nconf.env();
 
@@ -10,4 +11,7 @@ for (const key in reference) {
   settings[key] = nconf.get(key);
 }
 
-module.exports = settings;
+module.exports = {
+  ...settings,
+  LOG_LEVEL: LogLevels.parse(nconf.get('LOG_LEVEL')) ?? LogLevels.warn,
+};

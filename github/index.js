@@ -42,7 +42,7 @@ const github = function (yargs) {
       describe: 'Save list of starred github repos to dropbox',
       handler: async function () {
         console.log(`[github] Listing ${GITHUB_USERNAME}'s starred repos`);
-        const starredRepos = await octokit.custom.listAllStarredRepos();
+        const starredRepos = await octokit.custom.listAllStarredRepos(GITHUB_USERNAME);
         console.log(`[github] Found ${starredRepos.length} stars`);
         return await dropbox.uploadString(
           '/github/stars.json',
@@ -62,7 +62,10 @@ const github = function (yargs) {
           .demand('repo'),
       handler: async function (argv) {
         const [owner, repoName] = argv.repo.split('/');
-        const {data: repo} = await octokit.repos.get({owner, repo: repoName});
+        const {data: repo} = await octokit.rest.repos.get({
+          owner,
+          repo: repoName,
+        });
         return await archiveRepo(repo);
       },
     })
