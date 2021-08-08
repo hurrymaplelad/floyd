@@ -15,7 +15,6 @@
     "luxon": "^0.5.3",
     "nconf": "~0.10.0",
     "node-fetch": "^2.0.0",
-    "pepper-mint": "^1.7.2",
     "underscore": "^1.8.3",
     "yargs": "^11.0.0"
   },

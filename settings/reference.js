@@ -10,10 +10,6 @@ module.exports = {
   // goodreads:oauth
   GOODREADS_OAUTH_TOKEN: 'XXXXXX',
   GOODREADS_OAUTH_SECRET: 'XXXXXX',
-  // https://github.com/dhleong/pepper-mint/
-  MINT_USERNAME: 'XXXXXXXX',
-  MINT_PASS: 'XXXXXXXX',
-  MINT_COOKIE: 'XXXXXXXX',
   MOUNTAIN_PROJECT_ID: 'XXXXXXXXX',
   // https://rclone.org/commands/rclone_config/
   RCLONE_CONFIG_DROPBOX_TOKEN: '',
