@@ -1,4 +1,5 @@
 module.exports = {
+  // https://github.com/winstonjs/winston#logging-levels
   LOG_LEVEL: 'debug|info|*warn|error',
   DBOX_ACCESS_TOKEN: 'XXXXXXXXXXXXXXX',
   GITHUB_USERNAME: 'XXXXXXXX',

@@ -7,6 +7,7 @@ const fetch = require('node-fetch');
 const xml2js = require('xml2js');
 const {OAuth} = require('oauth');
 const util = require('util');
+const TraceError = require('trace-error');
 
 function makeURL(path, params) {
   const url = new URL('https://www.goodreads.com/');
@@ -16,6 +17,7 @@ function makeURL(path, params) {
   return url;
 }
 
+// GoodReads TOS say at most one call per second
 // from https://www.goodreads.com/api/terms
 const COOLDOWN = 1000; // ms
 
@@ -132,9 +134,8 @@ class Goodreads {
       _results
     ) {
       if (error) {
-        console.log(error);
         return callback(
-          'Error getting OAuth request token : ' + JSON.stringify(error),
+          new TraceError('Error getting OAuth request token', error),
           500
         );
       } else {

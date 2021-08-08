@@ -2,6 +2,9 @@ const dropboxV2Api = require('dropbox-v2-api');
 const settings = require('../settings');
 const {Readable} = require('stream');
 const {promisify} = require('util');
+const logging = require('../logging');
+
+const logger = logging.createLogger('dropbox');
 
 async function unlessDoesNotExist(asyncFn) {
   try {
@@ -41,7 +44,7 @@ class Dropbox {
               if (err) {
                 return reject(err);
               } else {
-                console.log(`[dropbox] Read ${result.size} bytes from ${path}`);
+                logger.info(`Read ${result.size} bytes from ${path}`);
                 return resolve(response.body);
               }
             }
@@ -60,9 +63,7 @@ class Dropbox {
       },
       readStream: dataStream,
     });
-    console.log(
-      `[dropbox] Wrote ${meta != null ? meta.size : void 0} bytes to ${path}`
-    );
+    logger.info(`Wrote ${meta != null ? meta.size : void 0} bytes to ${path}`);
     return meta;
   }
 
@@ -82,7 +83,7 @@ class Dropbox {
       resource: 'files/delete_v2',
       parameters: {path},
     });
-    return console.log(`[dropbox] Deleted ${path}`);
+    return logger.info(`Deleted ${path}`);
   }
 
   // Resolves to null for non-existant paths

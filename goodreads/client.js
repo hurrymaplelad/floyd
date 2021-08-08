@@ -1,5 +1,8 @@
 const GoodReads = require('./goodreads');
 const settings = require('../settings');
+const logging = require('../logging');
+
+const logger = logging.createLogger('goodreads');
 
 class GoodReadsClient {
   constructor() {
@@ -13,9 +16,7 @@ class GoodReadsClient {
 
   async getAllBooksOnShelf({name: shelfName, bookCount}) {
     let allBooks = [];
-    console.log(
-      `[goodreads] Fetching shelf "${shelfName}" (${bookCount} books)`
-    );
+    logger.info(`Fetching shelf "${shelfName}" (${bookCount} books)`);
     for await (let book of this.gr.listBooks({
       userId: settings.GOODREADS_USERID,
       shelf: shelfName,
@@ -23,7 +24,7 @@ class GoodReadsClient {
       allBooks.push(book);
       // Communicate progress
       if (allBooks.length % 100 === 0) {
-        console.log('.');
+        logger.info('.');
       }
     }
     return allBooks;

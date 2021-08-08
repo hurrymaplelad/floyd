@@ -4,11 +4,14 @@ const Dropbox = require('../dropbox/client');
 const {GITHUB_USERNAME} = require('../settings');
 const {promisify} = require('util');
 const asyncjs = require('async');
+const logging = require('../logging');
 const eachLimit = promisify(asyncjs.eachLimit);
 const dropbox = new Dropbox();
 
+const logger = logging.createLogger('github');
+
 async function archiveRepo(repo) {
-  console.log(`[${repo.full_name}] Archiving (${repo.size}K)`);
+  logger.info(`[${repo.full_name}] Archiving (${repo.size}K)`);
   const repoDir = `/github/${repo.full_name}`;
   const archivePath = `${repoDir}/${repo.name}.tar.gz`;
   // Check if repo has changed since last backup
@@ -18,7 +21,7 @@ async function archiveRepo(repo) {
     !meta.is_deleted &&
     new Date(meta.server_modified) >= new Date(repo.pushed_at)
   ) {
-    console.log(
+    logger.info(
       `[${repo.full_name}] Skipping. Unchanged since ${new Date(
         repo.pushed_at
       )})`
@@ -31,7 +34,7 @@ async function archiveRepo(repo) {
   );
   const localPath = await octokit.shell.downloadAndArchive(repo);
   const archiveStream = fs.createReadStream(localPath);
-  console.log(`[${repo.full_name}] Uploading`);
+  logger.info(`[${repo.full_name}] Uploading`);
   return await dropbox.uploadStream(archivePath, archiveStream);
 }
 
@@ -41,11 +44,11 @@ const github = function (yargs) {
       command: 'github:stars',
       describe: 'Save list of starred github repos to dropbox',
       handler: async function () {
-        console.log(`[github] Listing ${GITHUB_USERNAME}'s starred repos`);
+        logger.info(`Listing ${GITHUB_USERNAME}'s starred repos`);
         const starredRepos = await octokit.custom.listAllStarredRepos(
           GITHUB_USERNAME
         );
-        console.log(`[github] Found ${starredRepos.length} stars`);
+        logger.info(`Found ${starredRepos.length} stars`);
         return await dropbox.uploadString(
           '/github/stars.json',
           JSON.stringify(starredRepos, null, 2)
@@ -75,9 +78,7 @@ const github = function (yargs) {
       command: 'github:repos',
       describe: 'Archive github repos to dropbox',
       handler: async function () {
-        console.log(
-          `[github] Archiving all ${GITHUB_USERNAME}'s github contributions`
-        );
+        logger.info(`Archiving all ${GITHUB_USERNAME}'s github contributions`);
         const maxConcurrentUploads = 5;
         const ownRepos = await octokit.custom.listAllRepos(GITHUB_USERNAME);
         const reposContributedTo =
@@ -85,20 +86,17 @@ const github = function (yargs) {
         const repos = ownRepos.concat(
           reposContributedTo.map(octokit.graphQL.toRestRepo)
         );
-        console.log(`[github] Found ${repos.length} repos`);
+        logger.info(`Found ${repos.length} repos`);
         await eachLimit(repos, maxConcurrentUploads, async function (repo) {
           try {
             return await archiveRepo(repo);
           } catch (err) {
-            console.error(`[${repo.full_name}] BACKUP FAILED`);
-            return console.error(
-              `[${repo.full_name}] ${
-                (err && err.message) != null ? err.message : JSON.stringify(err)
-              }`
-            );
+            logger.error(`[${repo.full_name}] BACKUP FAILED`);
+            logger.error(err);
+            return;
           }
         });
-        console.log('[github] Done archiving repos');
+        logger.info('Done archiving repos');
       },
     });
 };

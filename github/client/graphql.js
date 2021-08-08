@@ -1,4 +1,7 @@
+const logging = require('../../logging');
 const settings = require('../../settings');
+
+const logger = logging.createLogger('github/graphql');
 
 const client = require('graphql-client')({
   url: 'https://api.github.com/graphql',
@@ -14,9 +17,9 @@ async function _query(queryString, vars) {
   const response = await client.query(queryString, vars);
   if (response.errors) {
     for (const error of response.errors) {
-      console.error(`[github] GraphQL error: ${error.message}`);
+      logger.error(`GraphQL error: ${error.message}`);
     }
-    console.error(response.highlightQuery);
+    logger.error(response.highlightQuery);
     throw response.errors[0];
   }
   return response;
