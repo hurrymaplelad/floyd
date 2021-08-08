@@ -13,7 +13,9 @@ const commands = function (yargs) {
       handler: async function () {
         const goodreads = new GoodReads();
         console.log(`[goodreads] Archiving shelves`);
-        const shelves = await goodreads.gr.listShelves(settings.GOODREADS_USERID);
+        const shelves = await goodreads.gr.listShelves(
+          settings.GOODREADS_USERID
+        );
         // const shelves = user.user_shelves.user_shelf;
         console.log(`[goodreads] Found ${shelves.length} shelves`);
         for (const shelf of shelves) {
@@ -31,7 +33,9 @@ const commands = function (yargs) {
       handler: async function () {
         console.log(`[goodreads] Generating an oauth token`);
         const goodreads = new GoodReads();
-        const {url: oauthUrl} = await new Promise(resolve => goodreads.gr.requestToken(resolve));
+        const {url: oauthUrl} = await new Promise((resolve) =>
+          goodreads.gr.requestToken(resolve)
+        );
         console.log(`open ${oauthUrl}`);
         console.log(`then press any key to continue`);
         await new Promise((resolve) => process.stdin.once('data', resolve));

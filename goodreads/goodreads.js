@@ -1,19 +1,12 @@
 /**
  * Forked from https://github.com/bdickason/node-goodreads
+ * API Docs: http://www.goodreads.com/api
  */
 
-/* API Docs: http://www.goodreads.com/api */
-
 const fetch = require('node-fetch');
-
 const xml2js = require('xml2js');
-
 const {OAuth} = require('oauth');
-
 const util = require('util');
-
-const querystring = require('querystring');
-const {resolve} = require('path');
 
 function makeURL(path, params) {
   const url = new URL('https://www.goodreads.com/');
@@ -136,9 +129,8 @@ class Goodreads {
       error,
       oauthToken,
       oauthTokenSecret,
-      results
+      _results
     ) {
-      var url;
       if (error) {
         console.log(error);
         return callback(
@@ -146,7 +138,7 @@ class Goodreads {
           500
         );
       } else {
-        url =
+        const url =
           'https://goodreads.com/oauth/authorize?oauth_token=' +
           oauthToken +
           '&oauth_callback=' +
@@ -167,8 +159,7 @@ class Goodreads {
       oauthTokenSecret,
       authorize,
       function (error, oauthAccessToken, oauthAccessTokenSecret, results) {
-        var parser;
-        parser = new xml2js.Parser();
+        const parser = new xml2js.Parser();
         if (error) {
           callback(
             'Error getting OAuth access token : ' +
@@ -187,7 +178,7 @@ class Goodreads {
             'https://www.goodreads.com/api/auth_user',
             oauthAccessToken,
             oauthAccessTokenSecret,
-            function (error, data, response) {
+            function (error, data, _response) {
               if (error) {
                 return callback(
                   'Error getting User ID : ' + util.inspect(error),
