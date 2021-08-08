@@ -6,25 +6,24 @@
     "node": "^16.6.1"
   },
   "dependencies": {
-    "@octokit/rest": "^14.0.9",
-    "async": "~2.6.0",
+    "@octokit/rest": "^18.9.0",
+    "async": "~3.2.1",
     "dropbox-v2-api": "^2.1.13",
     "goodreads-api-node": "hurrymaplelad/goodreads-api-node#access-token",
-    "graphql": "^0.11.7",
+    "graphql": "^15.5.1",
     "graphql-client": "^2.0.1",
-    "luxon": "^0.5.3",
-    "nconf": "~0.10.0",
+    "luxon": "^2.0.1",
+    "nconf": "~0.11.3",
     "node-fetch": "^2.0.0",
-    "underscore": "^1.8.3",
-    "yargs": "^11.0.0"
+    "yargs": "^17.1.0"
   },
   "devDependencies": {
-    "eslint": "^4.18.2",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-graphql": "^1.5.0",
-    "eslint-plugin-prettier": "^2.6.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-graphql": "^4.0.0",
+    "eslint-plugin-prettier": "^3.4.0",
     "expect.js": "~0.3.1",
-    "mocha": "~5.0.1",
+    "mocha": "~9.0.3",
     "prettier": "^2.3.2"
   },
   "bin": "./floyd.js",
