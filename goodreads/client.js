@@ -1,47 +1,33 @@
-const goodreads = require('goodreads-api-node');
+const GoodReads = require('./goodreads');
 const settings = require('../settings');
 
-class GoodReads {
-  static get COOLDOWN() {
-    return 1000; // ms, from https://www.goodreads.com/api/terms
-  }
-
-  static sleep(ms = GoodReads.COOLDOWN) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
+class GoodReadsClient {
   constructor() {
-    this.gr = goodreads({
+    this.gr = new GoodReads({
       key: settings.GOODREADS_APP_KEY,
       secret: settings.GOODREADS_APP_SECRET,
-    });
-    this.gr.initOAuth();
-    this.gr.setAccessToken({
-      token: settings.GOODREADS_OAUTH_TOKEN,
-      secret: settings.GOODREADS_OAUTH_SECRET,
+      oauthToken: settings.GOODREADS_OAUTH_TOKEN,
+      oauthTokenSecret: settings.GOODREADS_OAUTH_SECRET,
     });
   }
 
-  async getAllBooksOnShelf(shelf) {
-    const bookCount = Number(shelf.book_count._);
-    const perPage = 150;
+  async getAllBooksOnShelf({name: shelfName, bookCount}) {
     let allBooks = [];
-
-    console.log(`[goodreads] Fetching ${shelf.name} (${bookCount} books)`);
-    for (let pageNum = 1; (pageNum - 1) * perPage <= bookCount; pageNum++) {
-      await GoodReads.sleep();
-      const page = await this.gr.getBooksOnUserShelf(
-        settings.GOODREADS_USERID,
-        shelf.name,
-        {page: pageNum, per_page: perPage}
-      );
-      const books = page.books.book;
-
-      console.log(`[goodreads] Got page ${pageNum} (${books.length} books)`);
-      allBooks = allBooks.concat(books);
+    console.log(
+      `[goodreads] Fetching shelf "${shelfName}" (${bookCount} books)`
+    );
+    for await (let book of this.gr.listBooks({
+      userId: settings.GOODREADS_USERID,
+      shelf: shelfName,
+    })) {
+      allBooks.push(book);
+      // Communicate progress
+      if (allBooks.length % 100 === 0) {
+        console.log('.');
+      }
     }
     return allBooks;
   }
 }
 
-module.exports = GoodReads;
+module.exports = GoodReadsClient;
