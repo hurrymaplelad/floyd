@@ -22,8 +22,8 @@ class Mint {
   static parseDate(mintDate) {
     const dateTime = [
       'MMM d', // Ex: 'Mar 3', used ~2018
-      'MM/dd/yy' // Ex: '05/01/16', used ~2016
-    ].find(format => DateTime.fromFormat(mintDate, format, {zone: 'utc'}));
+      'MM/dd/yy', // Ex: '05/01/16', used ~2016
+    ].find((format) => DateTime.fromFormat(mintDate, format, {zone: 'utc'}));
 
     if (dateTime == null) {
       throw new Error(`[mint] Error: unparsable date [${mintDate}]`);
@@ -38,7 +38,7 @@ class Mint {
       return await this.pm.getTransactions({
         startDate: interval.start.toJSDate(),
         endDate: interval.end.toJSDate(),
-        offset
+        offset,
       });
     };
     let page = await getPage();

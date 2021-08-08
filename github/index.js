@@ -35,12 +35,12 @@ async function archiveRepo(repo) {
   return await dropbox.uploadStream(archivePath, archiveStream);
 }
 
-const github = function(yargs) {
+const github = function (yargs) {
   yargs
     .command({
       command: 'github:stars',
       describe: 'Save list of starred github repos to dropbox',
-      handler: async function() {
+      handler: async function () {
         console.log(`[github] Listing ${GITHUB_USERNAME}'s starred repos`);
         const starredRepos = await octokit.custom.listAllStarredRepos();
         console.log(`[github] Found ${starredRepos.length} stars`);
@@ -48,39 +48,40 @@ const github = function(yargs) {
           '/github/stars.json',
           JSON.stringify(starredRepos, null, 2)
         );
-      }
+      },
     })
     .command({
       command: 'github:repo <repo>',
       describe: 'Archive a single github repo to dropbox',
-      builder: yargs =>
+      builder: (yargs) =>
         yargs
           .example('$0 github:repo hmlad/floyd')
           .positional('repo', {
-            describe: 'Owner and repo name (ex: hmlad/floyd)'
+            describe: 'Owner and repo name (ex: hmlad/floyd)',
           })
           .demand('repo'),
-      handler: async function(argv) {
+      handler: async function (argv) {
         const [owner, repoName] = argv.repo.split('/');
         const {data: repo} = await octokit.repos.get({owner, repo: repoName});
         return await archiveRepo(repo);
-      }
+      },
     })
     .command({
       command: 'github:repos',
       describe: 'Archive github repos to dropbox',
-      handler: async function() {
+      handler: async function () {
         console.log(
           `[github] Archiving all ${GITHUB_USERNAME}'s github contributions`
         );
         const maxConcurrentUploads = 5;
         const ownRepos = await octokit.custom.listAllRepos(GITHUB_USERNAME);
-        const reposContributedTo = await octokit.graphQL.allRepositoriesContributedTo();
+        const reposContributedTo =
+          await octokit.graphQL.allRepositoriesContributedTo();
         const repos = ownRepos.concat(
           reposContributedTo.map(octokit.graphQL.toRestRepo)
         );
         console.log(`[github] Found ${repos.length} repos`);
-        await eachLimit(repos, maxConcurrentUploads, async function(repo) {
+        await eachLimit(repos, maxConcurrentUploads, async function (repo) {
           try {
             return await archiveRepo(repo);
           } catch (err) {
@@ -93,7 +94,7 @@ const github = function(yargs) {
           }
         });
         console.log('[github] Done archiving repos');
-      }
+      },
     });
 };
 

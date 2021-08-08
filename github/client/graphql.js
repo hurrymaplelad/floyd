@@ -3,12 +3,12 @@ const settings = require('../../settings');
 const client = require('graphql-client')({
   url: 'https://api.github.com/graphql',
   headers: {
-    Authorization: 'Bearer ' + settings.GITHUB_OAUTH_TOKEN
-  }
+    Authorization: 'Bearer ' + settings.GITHUB_OAUTH_TOKEN,
+  },
 });
 
 // Pass-through template tag triggering graphQL syntax support
-const gql = strings => strings.join('');
+const gql = (strings) => strings.join('');
 
 async function _query(queryString, vars) {
   const response = await client.query(queryString, vars);
@@ -35,13 +35,13 @@ async function _concatPages(query) {
 }
 
 const graphQL = {
-  allRepositoriesContributedTo: async function() {
+  allRepositoriesContributedTo: async function () {
     const contributedTo = await _concatPages(
       this.pageOfRepositoriesContributedTo
     );
     return contributedTo;
   },
-  pageOfRepositoriesContributedTo: async after => {
+  pageOfRepositoriesContributedTo: async (after) => {
     const response = await _query(
       gql`
         query contribs($after: String) {
@@ -70,7 +70,7 @@ const graphQL = {
     );
     return response.data.viewer.repositoriesContributedTo;
   },
-  toRestRepo: function(repo) {
+  toRestRepo: function (repo) {
     return {
       name: repo.name,
       full_name: repo.nameWithOwner,
@@ -78,10 +78,10 @@ const graphQL = {
       size: repo.diskUsage,
       clone_url: `${repo.url}.git`,
       owner: {
-        login: repo.nameWithOwner.split('/')[0]
-      }
+        login: repo.nameWithOwner.split('/')[0],
+      },
     };
-  }
+  },
 };
 
 module.exports = graphQL;

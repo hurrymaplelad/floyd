@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 
 async function concatPageData(
   method,
-  mapFn = function(x) {
+  mapFn = function (x) {
     return x;
   }
 ) {
@@ -19,7 +19,7 @@ async function concatPageData(
 const custom = {
   // Like getArchiveLink, but streams the archive response instead of buffering
   // Note that these archives don't include history
-  repoGetArchiveStream: async function({owner, repo, archive_format}) {
+  repoGetArchiveStream: async function ({owner, repo, archive_format}) {
     if (archive_format == null) {
       archive_format = 'tarball';
     }
@@ -28,27 +28,27 @@ const custom = {
     );
     return {
       meta: response,
-      data: response.body
+      data: response.body,
     };
   },
-  listAllRepos: async function(username) {
+  listAllRepos: async function (username) {
     const repos = await concatPageData(
       octokit.repos.getForUser({
         username: username,
         type: 'owner',
-        per_page: 75 // bump up the default to consume less of our quota
+        per_page: 75, // bump up the default to consume less of our quota
       })
     );
-    return repos.filter(function(repo) {
+    return repos.filter(function (repo) {
       return !repo.fork;
     });
   },
-  listAllStarredRepos: async function() {
+  listAllStarredRepos: async function () {
     const starredRepos = await concatPageData(
       octokit.activity.getStarredRepos({
-        per_page: 75 // bump up the default to consume less of our quota
+        per_page: 75, // bump up the default to consume less of our quota
       }),
-      function(response) {
+      function (response) {
         // the first page has starred_at, the rest don't >:(
         const repo = response.repo || response;
         return {
@@ -56,12 +56,12 @@ const custom = {
           description: repo.description,
           updated_at: repo.updated_at,
           stargazers_count: repo.stargazers_count,
-          language: repo.language
+          language: repo.language,
         };
       }
     );
     return starredRepos;
-  }
+  },
 };
 
 module.exports = custom;

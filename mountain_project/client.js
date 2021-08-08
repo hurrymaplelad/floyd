@@ -31,7 +31,7 @@ class MountainProject {
     }
     return {
       csv: csv,
-      tickCount: tickCount
+      tickCount: tickCount,
     };
   }
 

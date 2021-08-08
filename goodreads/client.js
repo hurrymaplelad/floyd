@@ -7,18 +7,18 @@ class GoodReads {
   }
 
   static sleep(ms = GoodReads.COOLDOWN) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   constructor() {
     this.gr = goodreads({
       key: settings.GOODREADS_APP_KEY,
-      secret: settings.GOODREADS_APP_SECRET
+      secret: settings.GOODREADS_APP_SECRET,
     });
     this.gr.initOAuth();
     this.gr.setAccessToken({
       token: settings.GOODREADS_OAUTH_TOKEN,
-      secret: settings.GOODREADS_OAUTH_SECRET
+      secret: settings.GOODREADS_OAUTH_SECRET,
     });
   }
 

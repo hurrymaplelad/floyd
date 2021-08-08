@@ -21,7 +21,7 @@ async function unlessDoesNotExist(asyncFn) {
 class Dropbox {
   constructor() {
     this.dropbox = dropboxV2Api.authenticate({
-      token: settings.DBOX_ACCESS_TOKEN
+      token: settings.DBOX_ACCESS_TOKEN,
     });
     this.dropboxAsPromised = promisify(this.dropbox);
   }
@@ -35,7 +35,7 @@ class Dropbox {
           const downloadStream = this.dropbox(
             {
               resource: 'files/download',
-              parameters: {path}
+              parameters: {path},
             },
             (err, result, response) => {
               if (err) {
@@ -56,9 +56,9 @@ class Dropbox {
       resource: 'files/upload',
       parameters: {
         path: path,
-        mode: 'overwrite'
+        mode: 'overwrite',
       },
-      readStream: dataStream
+      readStream: dataStream,
     });
     console.log(
       `[dropbox] Wrote ${meta != null ? meta.size : void 0} bytes to ${path}`
@@ -80,7 +80,7 @@ class Dropbox {
   async delete(path) {
     await this.dropboxAsPromised({
       resource: 'files/delete_v2',
-      parameters: {path}
+      parameters: {path},
     });
     return console.log(`[dropbox] Deleted ${path}`);
   }
@@ -90,7 +90,7 @@ class Dropbox {
     return await unlessDoesNotExist(() =>
       this.dropboxAsPromised({
         resource: 'files/get_metadata',
-        parameters: {path}
+        parameters: {path},
       })
     );
   }

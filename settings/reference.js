@@ -17,5 +17,5 @@ module.exports = {
   MOUNTAIN_PROJECT_ID: 'XXXXXXXXX',
   // https://rclone.org/commands/rclone_config/
   RCLONE_CONFIG_DROPBOX_TOKEN: '',
-  RCLONE_CONFIG_GDOCS_TOKEN: ''
+  RCLONE_CONFIG_GDOCS_TOKEN: '',
 };

@@ -49,7 +49,7 @@ async function archiveMonthOfTransactions(mint, monthInterval) {
   const seen = _.indexBy(existing, 'id');
   const combined = existing.concat(
     // Preserve mint order, but de-dupe
-    mintTransactions.filter(txn => !(txn.id in seen))
+    mintTransactions.filter((txn) => !(txn.id in seen))
   );
 
   await dropbox.uploadJSON(transactionFilePath(monthString), combined);
@@ -63,33 +63,33 @@ function parseDateOption(dateString) {
   return dt;
 }
 
-const mint = function(yargs) {
+const mint = function (yargs) {
   yargs
     .command({
       command: 'mint:transactions',
       describe:
         'Save transactions to dropbox for a timespan. Defaults to last week',
-      builder: yargs =>
+      builder: (yargs) =>
         yargs
           .option('start', {
             alias: 's',
             type: 'string',
-            describe: 'Ex: 2004, 2004-10, 2004-10-20'
+            describe: 'Ex: 2004, 2004-10, 2004-10-20',
           })
           .requiresArg('start')
           .option('end', {
             alias: 'e',
             type: 'string',
-            describe: 'Ex: 2004, 2004-10, 2004-10-20'
+            describe: 'Ex: 2004, 2004-10, 2004-10-20',
           })
           .requiresArg('end')
           .coerce({
             start: parseDateOption,
-            end: parseDateOption
+            end: parseDateOption,
           })
           .implies({
             start: 'end',
-            end: 'start'
+            end: 'start',
           })
           .example(
             '$0 mint:transactions',
@@ -99,7 +99,7 @@ const mint = function(yargs) {
             '$0 mint:transactions --start 2018-01 --end 2018-01-24',
             'Archive transactions in the given date range'
           ),
-      handler: async function(argv) {
+      handler: async function (argv) {
         console.log(`[mint] Listing transactions`);
         const mint = await Mint.login();
         const end = argv.end || DateTime.utc();
@@ -122,12 +122,12 @@ const mint = function(yargs) {
         for (let month of monthIntervals) {
           await archiveMonthOfTransactions(mint, month);
         }
-      }
+      },
     })
     .command({
       command: 'mint:categories',
       describe: 'Save mint spending categories hierarchy',
-      handler: async function() {
+      handler: async function () {
         console.log(`[mint] Listing categories`);
         const mint = await Mint.login();
         const categories = await mint.pm.getCategories();
@@ -139,7 +139,7 @@ const mint = function(yargs) {
           '/mint/categories.json',
           JSON.stringify(categories, null, 2)
         );
-      }
+      },
     });
 };
 
