@@ -16,7 +16,7 @@
     "nconf": "~0.11.3",
     "node-fetch": "^2.6.1",
     "oauth": "^0.9.15",
-    "plist": "^3.0.3",
+    "plist": "^3.0.4",
     "sanitize-filename": "^1.6.3",
     "todoist": "^0.5.1",
     "trace-error": "^1.0.3",
